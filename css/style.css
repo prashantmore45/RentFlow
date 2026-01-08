@@ -96,6 +96,48 @@ button:hover {
   margin-bottom: 4px;
 }
 
+.room-card strong {
+  color: #111;
+}
+
+.delete-btn {
+  background: #dc2626;
+  margin-top: 10px;
+}
+
+.delete-btn:hover {
+  background: #b91c1c;
+}
+
+/* AUTH PAGE */
+.auth-body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f1f5f9;
+}
+
+.auth-card {
+  background: #ffffff;
+  padding: 30px;
+  width: 100%;
+  max-width: 380px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.auth-card h1 {
+  margin-bottom: 5px;
+}
+
+.auth-subtitle {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
 /* MOBILE */
 @media (max-width: 600px) {
   .navbar {
