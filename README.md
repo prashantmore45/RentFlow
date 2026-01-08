@@ -29,5 +29,8 @@ A full-stack Room Finder web application that allows users to search rental room
 ## Deployment
 Live Demo: https://roomspacefinder.netlify.app/
 
+## Note
+“The application follows a unified user model where a logged-in user can act as both room finder and room owner, similar to real-world rental platforms.”
+
 ## Author
 Prashant More
