@@ -8,17 +8,20 @@
 </head>
 <body>
 
-    <nav>
-        <a href="index.html">Home</a> |
-        <a href="add-room.html">Add Room</a> |
-        <a href="my-rooms.html">My Rooms</a> |
-        <button id="logoutBtn">Logout</button>
+    <nav class="navbar">
+        <h2 class="logo">RoomFinder</h2>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="add-room.html">Add Room</a>
+            <a href="my-rooms.html">My Rooms</a>
+            <button id="logoutBtn">Logout</button>
+        </div>
     </nav>
 
     <h1>Available Rooms</h1>
 
     <!-- Filter -->
-    <input type="text" id="locationFilter" placeholder="Search by location" />
+    <input type="text" id="locationFilter" placeholder="🔍 Search by location" />
 
     <div id="rooms-container"></div>
 
