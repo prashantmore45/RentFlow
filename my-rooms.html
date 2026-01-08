@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Rooms</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    <nav>
+        <a href="index.html">Home</a> |
+        <a href="add-room.html">Add Room</a> |
+        <a href="my-rooms.html">My Rooms</a> |
+        <button id="logoutBtn">Logout</button>
+    </nav>
+
+
+    <h2>My Room Listings</h2>
+
+    <div id="my-rooms-container"></div>
+
+    <script type="module">
+        import { supabase } from "./js/supabase.js";
+
+        document.getElementById("logoutBtn").addEventListener("click", async () => {
+            await supabase.auth.signOut();
+            window.location.href = "login.html";
+        });
+    </script>
+
+
+    <script type="module" src="js/myRooms.js"></script>
+</body>
+</html>

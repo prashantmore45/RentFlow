@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Add Room</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+    <nav>
+        <a href="index.html">Home</a> |
+        <a href="add-room.html">Add Room</a> |
+        <a href="my-rooms.html">My Rooms</a> |
+        <button id="logoutBtn">Logout</button>
+    </nav>
+
+
+    <h2>Add New Room</h2>
+
+    <form id="add-room-form">
+        <input type="text" name="title" placeholder="Room Title" required />
+        <input type="text" name="location" placeholder="Location" required />
+        <input type="number" name="price" placeholder="Rent Price" required />
+
+        <select name="property_type" required>
+        <option value="">Property Type</option>
+        <option value="1 BHK">1 BHK</option>
+        <option value="2 BHK">2 BHK</option>
+        <option value="1 Bed">1 Bed</option>
+        <option value="2 Bed">2 Bed</option>
+        <option value="3 Bed">3 Bed</option>
+        </select>
+
+        <select name="tenant_preference" required>
+        <option value="">Tenant Preference</option>
+        <option value="Bachelor">Bachelor</option>
+        <option value="Family">Family</option>
+        <option value="Girls">Girls</option>
+        <option value="Working">Working</option>
+        </select>
+
+        <input type="text" name="contact_number" placeholder="Contact Number" required />
+
+        <button type="submit">Add Room</button>
+    </form>
+
+    <script type="module">
+        import { supabase } from "./js/supabase.js";
+
+        document.getElementById("logoutBtn").addEventListener("click", async () => {
+            await supabase.auth.signOut();
+            window.location.href = "login.html";
+        });
+    </script>
+
+
+    <script type="module" src="js/addRoom.js"></script>
+</body>
+</html>
