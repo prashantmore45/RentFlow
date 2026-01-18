@@ -28,7 +28,6 @@ body {
   background: var(--light-bg);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: var(--text-main);
-  padding: 20px;
   min-height: 100vh;
   line-height: 1.6;
 }
@@ -41,8 +40,7 @@ body {
   align-items: center;
   background: var(--dark-bg);
   padding: 16px 24px;
-  border-radius: var(--radius);
-  margin-bottom: 30px;
+  width: 100%;
   box-shadow: var(--shadow-lg);
   flex-wrap: wrap; 
   gap: 15px;
