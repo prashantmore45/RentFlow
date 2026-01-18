@@ -9,7 +9,7 @@
 <body>
 
     <nav class="navbar">
-        <h2 class="logo">RoomFinder</h2>
+        <h2 class="logo" style="font-size:x-large;">Room <span style="color: rgb(67, 67, 228);">Finder</span></h2>
         <div class="nav-links">
             <a href="index.html">Home</a>
             <a href="add-room.html">Add Room</a>
@@ -18,13 +18,24 @@
         </div>
     </nav>
 
-    <h1>Find Your Next Room</h1>
-    <p style="margin-bottom:15px; color:#555;">Browse available rooms by location</p>
+    <div class="hero-section" style="width: 100%; height: fit-content; text-align: center; padding: 50px 0; background-color:rgb(185, 123, 196) ;">
+        <h1 style="color: rgb(148, 197, 198);">Find Your Perfect Room</h1>
+        <p style="margin-bottom: 20px;">Browse available rooms and find the one that suits you best.</p>
 
-    <!-- Filter -->
-    <input type="text" id="locationFilter" placeholder="🔍 Search by location" />
+        <div class="searchBox" style="display: flex; justify-content: center; gap: 10px;">
+            <input type="text" placeholder="Search by location" id="searchInput" style="width: 500px; height: 40px; border: none; border-radius: 5px; padding: 0 10px;"/>
+            <button id="searchBtn" style="height: 40px;">Search</button>
+        </div>
+        
+    </div>
 
-    <div id="rooms-container"></div>
+    <div id="rooms-container" style="padding-left: 30px;">
+        <!-- Rooms will be dynamically inserted here -->
+        <h2 style="margin-top: 10px; margin-bottom: 10px;">Featured Rooms</h2>
+        <div class="rooms">
+
+        </div>
+    </div>
 
     <script type="module">
         import { supabase } from "./js/supabase.js";
