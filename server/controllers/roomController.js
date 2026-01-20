@@ -73,3 +73,36 @@ export const getRoomById = async (req, res) => {
         res.status(404).json({ error: "Room not found" });
     }
 };
+
+
+// GET MY ROOMS (For Dashboard)
+export const getMyRooms = async (req, res) => {
+    try {
+        const { user_id } = req.params;
+        const { data, error } = await supabase
+            .from('rooms')
+            .select('*')
+            .eq('owner_id', user_id); // Filter by owner
+
+        if (error) throw error;
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+// DELETE ROOM
+export const deleteRoom = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { error } = await supabase
+            .from('rooms')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+        res.status(200).json({ message: "Room deleted successfully" });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
