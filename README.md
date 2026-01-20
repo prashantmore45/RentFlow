@@ -2,8 +2,7 @@
 
 > A full-stack application connecting landlords with tenants through a "Job Board" style interface.
 
-![RoomFinder Banner](https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&h=400&q=80)
-*(Replace this link with a real screenshot of your app once deployed!)*
+![RoomFinder Banner](https://environmental-teal-ecruipczrq.edgeone.app/roomfinder.png)
 
 ## 🚀 Live Demo
 **Frontend:** [https://roomfinder-v2.netlify.app](https://roomfinder-v2.netlify.app)  
@@ -57,9 +56,9 @@ cd room-finder-v2
 npm install
 ```
 - Create a .env file in the server folder:
-    PORT=5000
-    SUPABASE_URL=your_supabase_url
-    SUPABASE_KEY=your_service_role_secret_key
+  * PORT=5000
+  * SUPABASE_URL=your_supabase_url
+  * SUPABASE_KEY=your_service_role_secret_key
 
 - Run the server:
 ```Bash 
@@ -71,9 +70,9 @@ npm install
 npm install
 ```
 - Create a .env file in the client folder:
-    VITE_SUPABASE_URL=your_supabase_url
-    VITE_SUPABASE_ANON_KEY=your_anon_public_key
-    VITE_API_URL=http://localhost:5000
+    * VITE_SUPABASE_URL=your_supabase_url
+    * VITE_SUPABASE_ANON_KEY=your_anon_public_key
+    * VITE_API_URL=http://localhost:5000
 
 - Run the client:
 ```Bash
@@ -83,14 +82,14 @@ npm install
 
 📡 API Endpoints
 
-```bash
-Method,Endpoint,Description
-GET,/api/rooms,Fetch all rooms (supports ?location= & ?type=)
-POST,/api/rooms,Post a new room
-POST,/api/applications,Apply for a room
-GET,/api/applications/landlord/:id,Get applications received by a user
-PATCH,/api/applications/:id,Update status (Accept/Reject)
-```
+Method  |         Endpoint       |                   Description                     |
+ :---   |           :---         |                      :---                         |
+GET     |  /api/rooms            |  Fetch all rooms (supports ?location= & ?type=)   |  
+POST    |  /api/rooms            |  Post a new room                                  |
+POST    |  /api/applications     |  Apply for a room                                 |
+GET     |  /api/applications/    |  landlord/:id,Get applications received by a user |
+PATCH   |  /api/applications/:id |  Update status (Accept/Reject)                    |
+
 ---
 
 🛡️ Security Note
@@ -99,5 +98,7 @@ This project implements Environment Variable isolation. Database service keys ar
 
 ---
 
-Developed by Prashant More
+## 👨‍💻 Developed by Prashant More
+<p><a href="https://prashant-portfolio-pro.vercel.app/">🌐 View Portfolio</a></p> 
 
+<p></p><a href="https://linkedin.com/in/prashant-more-48b164287" target="blank"><img src="https://img.shields.io/badge/-LinkedIn-blue?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a></p>
