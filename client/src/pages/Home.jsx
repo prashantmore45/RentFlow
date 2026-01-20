@@ -6,7 +6,7 @@ import { Search, MapPin, IndianRupee, Home as HomeIcon, Filter } from 'lucide-re
 const Home = () => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
- 
+  
   const [locationSearch, setLocationSearch] = useState('');
   const [typeSearch, setTypeSearch] = useState('');
 
@@ -45,17 +45,21 @@ const Home = () => {
     <div className="min-h-screen bg-gray-900 text-white">
       
       {/* HERO SECTION */}
-      <div className="relative h-[500px] flex items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-gray-900 overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20">
+      <div className="relative h-auto min-h-[500px] md:h-[500px] py-20 md:py-0 flex items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-gray-900 overflow-hidden">
+        
+        {/* Abstract Background Shapes */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
             <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-purple-500 blur-3xl"></div>
             <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-blue-500 blur-3xl"></div>
         </div>
 
-        <div className="relative z-10 text-center max-w-4xl px-4">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-purple-200">
+        <div className="relative z-10 text-center w-full max-w-4xl px-4">
+          
+          <h1 className="text-3xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-purple-200 leading-tight">
             Find Your Perfect Room
           </h1>
-          <p className="text-xl text-gray-300 mb-10">
+          
+          <p className="text-lg md:text-xl text-gray-300 mb-8 md:mb-10">
             Search hundreds of verified listings for students and professionals.
           </p>
 
@@ -102,7 +106,7 @@ const Home = () => {
       <div className="max-w-7xl mx-auto px-4 py-16">
         <div className="flex justify-between items-end mb-8 border-b border-gray-800 pb-4">
             <div>
-                <h2 className="text-3xl font-bold">Latest Listings</h2>
+                <h2 className="text-2xl md:text-3xl font-bold">Latest Listings</h2>
                 <p className="text-gray-400 mt-1">
                     {rooms.length} {rooms.length === 1 ? 'result' : 'results'} found
                     {(locationSearch || typeSearch) && <span className="text-blue-400 ml-1">(Filtered)</span>}
