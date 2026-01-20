@@ -3,6 +3,10 @@ import { supabase } from '../index.js';
 export const applyForRoom = async (req, res) => {
     const { room_id, owner_id, message, applicant_id } = req.body;
 
+    if (owner_id === applicant_id) {
+        return res.status(400).json({ message: "You cannot apply to your own room!" });
+    }
+
     const { data: existing } = await supabase
         .from('applications')
         .select('*')

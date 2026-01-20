@@ -67,26 +67,33 @@ const RoomDetails = () => {
       <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-6">
           <div className="bg-gray-800 rounded-3xl p-8 border border-gray-700 relative overflow-hidden">
-             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-purple-500"></div>
-             <h1 className="text-3xl font-bold mb-4">{room.title}</h1>
-             <div className="flex flex-wrap gap-4 text-gray-300 mb-6">
-               <span className="flex items-center bg-gray-700 px-3 py-1 rounded-lg text-sm">
-                 <MapPin size={16} className="mr-2 text-blue-400" /> {room.location}
-               </span>
-               <span className="flex items-center bg-gray-700 px-3 py-1 rounded-lg text-sm">
-                 <User size={16} className="mr-2 text-purple-400" /> {room.tenant_preference}
-               </span>
-             </div>
-             <p className="text-gray-400 leading-relaxed">
-               This {room.property_type} is located in {room.location}. Rent: ₹{room.price}.
-             </p>
+            <div className="h-64 w-full relative mb-6 rounded-2xl overflow-hidden group">
+              <img 
+                  src={room.image_url ? room.image_url : `https://source.unsplash.com/random/800x600/?apartment&sig=${room.id}`} 
+                  alt={room.title}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
+            </div>
+            <h1 className="text-3xl font-bold mb-4">{room.title}</h1>
+            <div className="flex flex-wrap gap-4 text-gray-300 mb-6">
+              <span className="flex items-center bg-gray-700 px-3 py-1 rounded-lg text-sm">
+                <MapPin size={16} className="mr-2 text-blue-400" /> {room.location}
+              </span>
+              <span className="flex items-center bg-gray-700 px-3 py-1 rounded-lg text-sm">
+                <User size={16} className="mr-2 text-purple-400" /> {room.tenant_preference}
+              </span>
+            </div>
+            <p className="text-gray-400 leading-relaxed">
+              This {room.property_type} is located in {room.location}. Rent: ₹{room.price}.
+            </p>
           </div>
         </div>
 
         <div className="md:col-span-1">
           <div className="bg-gray-800 rounded-3xl p-6 border border-gray-700 sticky top-8">
             <div className="mb-6">
-              <p className="text-gray-400 text-sm">Monthly Rent</p>
+              <p className="text-gray-400 text-sm mb-2">Monthly Rent</p>
               <h3 className="text-3xl font-bold text-green-400 flex items-center">
                 <IndianRupee size={24} /> {room.price}
               </h3>
