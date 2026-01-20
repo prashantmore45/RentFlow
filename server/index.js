@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
 import roomRoutes from './routes/roomRoutes.js';
 import applicationRoutes from './routes/applicationRoutes.js';
+import profileRoutes from './routes/profileRoutes.js';
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use(cors());
 
 app.use('/api/rooms', roomRoutes);
 app.use('/api/applications', applicationRoutes);
+app.use('/api/profiles', profileRoutes);
 
 export const supabase = createClient(
     process.env.SUPABASE_URL,

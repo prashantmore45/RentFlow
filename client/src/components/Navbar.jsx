@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
-import { LogOut, Home, PlusSquare, LayoutDashboard, Menu, X } from 'lucide-react';
+import { LogOut, Home, PlusSquare, LayoutDashboard, Menu, X, User } from 'lucide-react';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -39,6 +39,7 @@ const Navbar = () => {
             RoomFinder
           </Link>
 
+          {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-4">
             <Link to="/" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-lg transition-all flex items-center gap-2">
               <Home size={18} /> Home
@@ -53,6 +54,11 @@ const Navbar = () => {
                   <LayoutDashboard size={18} /> Dashboard
                 </Link>
                 
+                {/* Profile Link */}
+                <Link to="/profile" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-lg transition-all flex items-center gap-2">
+                  <User size={18} /> Profile
+                </Link>
+                                
                 <div className="flex items-center gap-4 ml-2 pl-4 border-l border-gray-700">
                   <button onClick={handleLogout} className="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2 text-sm font-bold border border-red-500/20">
                     <LogOut size={16} /> Logout
@@ -76,6 +82,7 @@ const Navbar = () => {
             )}
           </div>
 
+          {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center">
             <button onClick={() => setIsOpen(!isOpen)} className="text-gray-300 hover:text-white hover:bg-gray-800 p-2 rounded-lg focus:outline-none transition-colors">
               {isOpen ? <X size={28} /> : <Menu size={28} />}
@@ -84,6 +91,7 @@ const Navbar = () => {
         </div>
       </div>
 
+      {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden bg-gray-900 border-b border-gray-700 shadow-xl">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
@@ -98,6 +106,9 @@ const Navbar = () => {
                 </Link>
                 <Link to="/dashboard" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
                   <LayoutDashboard size={20} className="text-green-400" /> Dashboard
+                </Link>
+                <Link to="/profile" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
+                  <User size={20} /> Profile
                 </Link>
                 <button onClick={handleLogout} className="w-full text-left text-red-400 hover:bg-red-500/10 hover:text-red-300 block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 mt-2 border-t border-gray-800 transition-colors">
                   <LogOut size={20} /> Logout

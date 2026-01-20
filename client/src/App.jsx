@@ -7,6 +7,8 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Footer from './components/Footer';
 import EditRoom from './pages/EditRoom';
+import Profile from './pages/Profile';
+
 
 function App() {
   return (
@@ -21,6 +23,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/edit-room/:id" element={<EditRoom />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </div>
       </div>
