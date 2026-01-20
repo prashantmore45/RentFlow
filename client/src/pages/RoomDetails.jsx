@@ -11,7 +11,7 @@ const RoomDetails = () => {
   useEffect(() => {
     const fetchRoom = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/rooms/${id}`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/rooms/${id}`);
         setRoom(res.data);
       } catch (error) {
         console.error("Error fetching room details:", error);
