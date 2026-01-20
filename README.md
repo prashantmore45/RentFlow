@@ -56,9 +56,9 @@ cd room-finder-v2
 npm install
 ```
 - Create a .env file in the server folder:
-    PORT=5000
-    SUPABASE_URL=your_supabase_url
-    SUPABASE_KEY=your_service_role_secret_key
+  * PORT=5000
+  * SUPABASE_URL=your_supabase_url
+  * SUPABASE_KEY=your_service_role_secret_key
 
 - Run the server:
 ```Bash 
@@ -98,7 +98,7 @@ This project implements Environment Variable isolation. Database service keys ar
 
 ---
 
-Developed by Prashant More
-<a href="https://prashant-portfolio-pro.vercel.app/">🌐 View Portfolio</a>
-<a href="https://linkedin.com/in/prashant-more-48b164287" target="blank"><img src="https://img.shields.io/badge/-LinkedIn-blue?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
+## 👨‍💻 Developed by Prashant More
+<p><a href="https://prashant-portfolio-pro.vercel.app/">🌐 View Portfolio</a></p> 
 
+<p></p><a href="https://linkedin.com/in/prashant-more-48b164287" target="blank"><img src="https://img.shields.io/badge/-LinkedIn-blue?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a></p>
