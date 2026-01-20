@@ -1,63 +1,30 @@
 import { supabase } from '../index.js';
 
-// ADD NEW ROOM
-export const createRoom = async (req, res) => {
-    try {
-        const { 
-            title, 
-            location, 
-            price, 
-            property_type, 
-            tenant_preference, 
-            contact_number, 
-            owner_id,
-            image_url 
-        } = req.body;
-
-        if (!title || !price || !location || !contact_number) {
-            return res.status(400).json({ error: "Please fill all required fields." });
-        }
-
-        const { data, error } = await supabase
-            .from('rooms')
-            .insert([{ 
-                owner_id,
-                title, 
-                location, 
-                price, 
-                property_type, 
-                tenant_preference, 
-                contact_number, 
-                image_url 
-            }])
-            .select();
-
-        if (error) throw error;
-
-        res.status(201).json({ message: "Room created successfully", room: data[0] });
-
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
-
-// GET ALL ROOMS
+// 1. GET ROOMS (With Search Filter)
 export const getRooms = async (req, res) => {
     try {
-        const { data, error } = await supabase
-            .from('rooms')
-            .select('*')
-            .order('created_at', { ascending: false });
+        const { location, type } = req.query;
+        
+        let query = supabase.from('rooms').select('*');
 
+        if (location) {
+            query = query.ilike('location', `%${location}%`);
+        }
+
+        if (type && type !== "All Types") {
+            query = query.eq('property_type', type);
+        }
+
+        const { data, error } = await query;
         if (error) throw error;
-
+        
         res.status(200).json(data);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
 };
 
-// GET SINGLE ROOM
+// 2. GET SINGLE ROOM
 export const getRoomById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -65,7 +32,7 @@ export const getRoomById = async (req, res) => {
             .from('rooms')
             .select('*')
             .eq('id', id)
-            .single(); 
+            .single();
 
         if (error) throw error;
         res.status(200).json(data);
@@ -74,16 +41,27 @@ export const getRoomById = async (req, res) => {
     }
 };
 
+// 3. CREATE ROOM
+export const createRoom = async (req, res) => {
+    try {
+        const { title, location, price, property_type, tenant_preference, contact_number, owner_id, image_url } = req.body;
+        const { data, error } = await supabase
+            .from('rooms')
+            .insert([{ title, location, price, property_type, tenant_preference, contact_number, owner_id, image_url }])
+            .select();
 
-// GET MY ROOMS (For Dashboard)
+        if (error) throw error;
+        res.status(201).json(data);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+// 4. GET MY ROOMS
 export const getMyRooms = async (req, res) => {
     try {
         const { user_id } = req.params;
-        const { data, error } = await supabase
-            .from('rooms')
-            .select('*')
-            .eq('owner_id', user_id); // Filter by owner
-
+        const { data, error } = await supabase.from('rooms').select('*').eq('owner_id', user_id);
         if (error) throw error;
         res.status(200).json(data);
     } catch (error) {
@@ -91,15 +69,11 @@ export const getMyRooms = async (req, res) => {
     }
 };
 
-// DELETE ROOM
+// 5. DELETE ROOM
 export const deleteRoom = async (req, res) => {
     try {
         const { id } = req.params;
-        const { error } = await supabase
-            .from('rooms')
-            .delete()
-            .eq('id', id);
-
+        const { error } = await supabase.from('rooms').delete().eq('id', id);
         if (error) throw error;
         res.status(200).json({ message: "Room deleted successfully" });
     } catch (error) {
@@ -107,18 +81,12 @@ export const deleteRoom = async (req, res) => {
     }
 };
 
-// UPDATE ROOM
+// 6. UPDATE ROOM
 export const updateRoom = async (req, res) => {
     try {
         const { id } = req.params;
-        const updates = req.body; 
-
-        const { data, error } = await supabase
-            .from('rooms')
-            .update(updates)
-            .eq('id', id)
-            .select();
-
+        const updates = req.body;
+        const { data, error } = await supabase.from('rooms').update(updates).eq('id', id).select();
         if (error) throw error;
         res.status(200).json(data);
     } catch (error) {
