@@ -1,36 +1,103 @@
-# Room Finder Website
+# 🏠 RoomFinder - Modern Accommodation Platform
 
-A full-stack Room Finder web application that allows users to search rental rooms and enables room owners to add and manage room listings.
+> A full-stack application connecting landlords with tenants through a "Job Board" style interface.
 
-## Features
-- User authentication (Email)
-- Search rooms by location
-- Add new room listings
-- View own rooms
-- Delete room listings
-- Responsive UI
-- Supabase backend (Auth, Database)
+![RoomFinder Banner](https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&h=400&q=80)
+*(Replace this link with a real screenshot of your app once deployed!)*
 
-## Tech Stack
-- HTML, CSS, JavaScript
-- Supabase (Authentication, PostgreSQL)
-- Netlify (Deployment)
+## 🚀 Live Demo
+**Frontend:** [https://roomfinder-v2.netlify.app](https://roomfinder-v2.netlify.app)  
+**Backend API:** [https://room-finder-api.onrender.com](https://room-finder-api.onrender.com)
 
-## User Roles
-### Room Finder
-- View available rooms
-- Search by location
+---
 
-### Room Owner
-- Add rooms
-- View own rooms
-- Delete rooms
+## 📖 Project Overview
+RoomFinder solves the problem of unstructured rental hunting. Instead of just listing a phone number, landlords can manage "Applications" from tenants. 
+Tenants apply to rooms with a message, and landlords get a dashboard to **Accept** or **Reject** applicants, similar to an Applicant Tracking System (ATS).
 
-## Deployment
-Live Demo: https://roomspacefinder.netlify.app/
 
-## Note
-“The application follows a unified user model where a logged-in user can act as both room finder and room owner, similar to real-world rental platforms.”
+### ✨ Key Features
+- **Auth & Security:** Full authentication (Login/Signup) using Supabase Auth with Row Level Security (RLS).
+- **Listing Management:** Users can post rooms with detailed attributes (Price, Location, Type).
+- **Smart Search:** Server-side filtering for Location and Property Type.
+- **Application System:** - Tenants can apply to rooms with a personal message.
+  - Landlords have a dashboard to view received applications.
+  - **Accept/Reject Logic:** Real-time status updates for applications.
+- **Responsive UI:** Built with Tailwind CSS, featuring Glassmorphism and Mobile-First design.
 
-## Author
-Prashant More
+---
+
+## 🛠️ Tech Stack
+
+|    Domain      |                     Technology                      |
+|     :---       |                        :---                         |
+| **Frontend**   | React.js (Vite), Tailwind CSS, Framer Motion, Axios |
+| **Backend**    | Node.js, Express.js                                 |
+| **Database**   | Supabase (PostgreSQL)                               |
+| **Deployment** | Netlify (Client), Render (Server)                   |
+
+---
+
+## ⚡ Setup Instructions (Run Locally)
+
+### Prerequisites
+- Node.js installed
+- A Supabase account
+
+### 1. Clone the Repository
+
+```bash
+git clone [https://github.com/YOUR_USERNAME/room-finder-v2.git](https://github.com/YOUR_USERNAME/room-finder-v2.git)
+cd room-finder-v2
+```
+
+### 2. Backend SetupBashcd server
+
+```bash
+npm install
+```
+- Create a .env file in the server folder:
+    PORT=5000
+    SUPABASE_URL=your_supabase_url
+    SUPABASE_KEY=your_service_role_secret_key
+
+- Run the server:
+```Bash 
+    npm run dev
+ ```
+### 3. Frontend SetupOpen a new terminal:Bashcd client
+
+```bash
+npm install
+```
+- Create a .env file in the client folder:
+    VITE_SUPABASE_URL=your_supabase_url
+    VITE_SUPABASE_ANON_KEY=your_anon_public_key
+    VITE_API_URL=http://localhost:5000
+
+- Run the client:
+```Bash
+    npm run dev
+```
+---
+
+📡 API Endpoints
+
+```bash
+Method,Endpoint,Description
+GET,/api/rooms,Fetch all rooms (supports ?location= & ?type=)
+POST,/api/rooms,Post a new room
+POST,/api/applications,Apply for a room
+GET,/api/applications/landlord/:id,Get applications received by a user
+PATCH,/api/applications/:id,Update status (Accept/Reject)
+```
+---
+
+🛡️ Security Note
+
+This project implements Environment Variable isolation. Database service keys are restricted to the backend server, while the frontend interacts only with the public API and restricted Supabase client keys.
+
+---
+
+Developed by Prashant More
+

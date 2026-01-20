@@ -1,14 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, ArrowRight, Home } from 'lucide-react';
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  const [isSignUp, setIsSignUp] = useState(false); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false); 
+
+  useEffect(() => {
+    if (location.state?.mode === 'signup') {
+      setIsSignUp(true);
+    }
+  }, [location.state]);
 
   const handleAuth = async (e) => {
     e.preventDefault();
@@ -22,7 +30,7 @@ const Login = () => {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate('/'); 
+        navigate('/');
       }
     } catch (error) {
       alert(error.message);
@@ -33,7 +41,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex bg-gray-900 text-white">
- 
+      
       <div className="hidden md:flex w-1/2 bg-gradient-to-br from-blue-600 to-purple-700 items-center justify-center relative overflow-hidden">
         <div className="absolute w-96 h-96 bg-white/10 rounded-full blur-3xl -top-10 -left-10"></div>
         <div className="absolute w-96 h-96 bg-black/10 rounded-full blur-3xl bottom-0 right-0"></div>
