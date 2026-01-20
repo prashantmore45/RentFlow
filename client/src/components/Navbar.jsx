@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
-import { LogOut, Home, PlusSquare, User } from 'lucide-react';
+import { LogOut, Home, PlusSquare, User, LayoutDashboard } from 'lucide-react';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -45,6 +45,9 @@ const Navbar = () => {
             <>
               <Link to="/add-room" className="text-gray-300 hover:text-white flex items-center gap-2">
                 <PlusSquare size={18} /> Post Room
+              </Link>
+              <Link to="/dashboard" className="text-gray-300 hover:text-white flex items-center gap-2">
+                <LayoutDashboard size={18} /> Dashboard
               </Link>
               <div className="flex items-center gap-4 ml-4 pl-4 border-l border-gray-700">
                 <span className="text-xs text-gray-500 hidden md:block">{user.email}</span>

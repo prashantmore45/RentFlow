@@ -1,10 +1,8 @@
 import { supabase } from '../index.js';
 
-// 1. APPLY FOR A ROOM
 export const applyForRoom = async (req, res) => {
     const { room_id, owner_id, message, applicant_id } = req.body;
 
-    // Check if already applied
     const { data: existing } = await supabase
         .from('applications')
         .select('*')
@@ -25,11 +23,10 @@ export const applyForRoom = async (req, res) => {
     res.status(201).json({ message: "Application sent successfully!", data });
 };
 
-// 2. GET MY APPLICATIONS (For Tenant)
+
 export const getMyApplications = async (req, res) => {
     const { user_id } = req.params;
     
-    // Join with 'rooms' table to get room details
     const { data, error } = await supabase
         .from('applications')
         .select('*, rooms(title, location, price)') 
@@ -39,7 +36,7 @@ export const getMyApplications = async (req, res) => {
     res.status(200).json(data);
 };
 
-// 3. GET APPLICANTS FOR MY ROOMS (For Landlord)
+
 export const getLandlordApplications = async (req, res) => {
     const { user_id } = req.params;
 
@@ -50,4 +47,19 @@ export const getLandlordApplications = async (req, res) => {
 
     if (error) return res.status(400).json({ error: error.message });
     res.status(200).json(data);
+};
+
+
+export const updateApplicationStatus = async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body; 
+
+    const { data, error } = await supabase
+        .from('applications')
+        .update({ status })
+        .eq('id', id)
+        .select();
+
+    if (error) return res.status(400).json({ error: error.message });
+    res.status(200).json({ message: `Application ${status}`, data });
 };
