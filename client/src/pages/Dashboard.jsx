@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
-import { Send, Inbox, Home, Trash2 } from 'lucide-react';
+import { Send, Inbox, Home, Trash2, Edit } from 'lucide-react';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [sentApps, setSentApps] = useState([]);
   const [receivedApps, setReceivedApps] = useState([]);
   const [myRooms, setMyRooms] = useState([]); 
@@ -87,14 +89,37 @@ const Dashboard = () => {
 
         {activeTab === 'sent' && (
           <div className="space-y-4">
-             {sentApps.length === 0 ? <p className="text-gray-500">No applications sent.</p> : sentApps.map(app => (
-              <div key={app.id} className="bg-gray-800 p-6 rounded-2xl border border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                  <h3 className="text-xl font-bold text-white">{app.rooms?.title}</h3>
-                  <p className="text-gray-400 text-sm">₹{app.rooms?.price} • {app.rooms?.location}</p>
+            {sentApps.length === 0 ? <p className="text-gray-500">No applications sent.</p> : sentApps.map(app => (
+              <div key={app.id} className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden flex flex-col md:flex-row">
+                <div className="w-full md:w-48 h-48 md:h-auto relative bg-gray-700 shrink-0">
+                  <img 
+                      src={app.rooms?.image_url || "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80"} 
+                      alt={app.rooms?.title}
+                      onError={(e) => { 
+                          e.target.onerror = null; 
+                          e.target.src = "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80"; 
+                      }}
+                      className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded-md">
+                      ₹{app.rooms?.price}/mo
+                  </div>
                 </div>
-                <div className={`px-4 py-2 rounded-full border capitalize font-bold text-sm ${getStatusColor(app.status)}`}>
-                  {app.status}
+
+                <div className="p-6 flex flex-col justify-center flex-grow">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-xl font-bold text-white line-clamp-1">{app.rooms?.title}</h3>
+                    <span className={`px-3 py-1 rounded-full text-xs border capitalize font-bold shrink-0 ml-2 ${getStatusColor(app.status)}`}>
+                        {app.status}
+                    </span>
+                  </div>
+                  
+                  <p className="text-gray-400 text-sm mb-4">{app.rooms?.location}</p>
+                  
+                  <div className="bg-gray-900/50 p-3 rounded-lg border border-gray-700/50">
+                    <p className="text-xs text-gray-500 mb-1">Your Message:</p>
+                    <p className="text-gray-300 italic text-sm">"{app.message}"</p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -108,7 +133,7 @@ const Dashboard = () => {
                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2">
                     <div>
                         <h3 className="text-lg font-bold text-white">Applicant: <span className="text-purple-400">User...{app.applicant_id.slice(0,4)}</span></h3>
-                        <p className="text-sm text-gray-400">For Room: {app.rooms?.title}</p>
+                        <p className="text-sm text-gray-400 mt-2">For Room: {app.rooms?.title}</p>
                     </div>
                     <span className={`px-3 py-1 rounded-full text-xs border capitalize ${getStatusColor(app.status)}`}>
                         {app.status}
@@ -151,13 +176,22 @@ const Dashboard = () => {
                 <div className="p-5">
                   <h3 className="text-lg font-bold text-white mb-1 truncate">{room.title}</h3>
                   <p className="text-sm text-gray-400 mb-4">{room.location}</p>
-                  
-                  <button 
-                    onClick={() => handleDeleteRoom(room.id)}
-                    className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors font-medium"
-                  >
-                    <Trash2 size={18} /> Delete Listing
-                  </button>
+
+                  <div className="flex gap-3 mt-4">
+                      <button 
+                          onClick={() => navigate(`/edit-room/${room.id}`)} 
+                          className="flex-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors font-medium"
+                      >
+                          <Edit size={16} /> Edit
+                      </button>
+
+                      <button 
+                          onClick={() => handleDeleteRoom(room.id)}
+                          className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors font-medium"
+                      >
+                          <Trash2 size={16} /> Delete
+                      </button>
+                  </div>
                 </div>
               </div>
             ))}

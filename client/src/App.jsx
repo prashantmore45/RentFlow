@@ -6,6 +6,7 @@ import RoomDetails from './pages/RoomDetails';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Footer from './components/Footer';
+import EditRoom from './pages/EditRoom';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="/room/:id" element={<RoomDetails />} />
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/edit-room/:id" element={<EditRoom />} />
           </Routes>
         </div>
       </div>

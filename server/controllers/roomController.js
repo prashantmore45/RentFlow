@@ -106,3 +106,22 @@ export const deleteRoom = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+
+// UPDATE ROOM
+export const updateRoom = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updates = req.body; 
+
+        const { data, error } = await supabase
+            .from('rooms')
+            .update(updates)
+            .eq('id', id)
+            .select();
+
+        if (error) throw error;
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
