@@ -99,8 +99,8 @@ const Home = () => {
      
               <div className="h-48 relative overflow-hidden">
                 <img 
-                  src={`https://source.unsplash.com/random/800x600/?apartment,bedroom&sig=${room.id}`} 
-                  alt="Room"
+                  src={room.image_url ? room.image_url : `https://source.unsplash.com/random/800x600/?apartment&sig=${room.id}`} 
+                  alt={room.title}
                   className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                   onError={(e) => {e.target.src = 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80'}}
                 />

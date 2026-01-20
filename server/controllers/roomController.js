@@ -10,7 +10,8 @@ export const createRoom = async (req, res) => {
             property_type, 
             tenant_preference, 
             contact_number, 
-            owner_id
+            owner_id,
+            image_url 
         } = req.body;
 
         if (!title || !price || !location || !contact_number) {
@@ -19,16 +20,17 @@ export const createRoom = async (req, res) => {
 
         const { data, error } = await supabase
             .from('rooms')
-            .insert([{
+            .insert([{ 
                 owner_id,
-                title,
-                location,
-                price,
-                property_type,
-                tenant_preference,
-                contact_number
+                title, 
+                location, 
+                price, 
+                property_type, 
+                tenant_preference, 
+                contact_number, 
+                image_url 
             }])
-            .select(); 
+            .select();
 
         if (error) throw error;
 
