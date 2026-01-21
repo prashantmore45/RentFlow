@@ -4,12 +4,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
 import { 
   Search, MapPin, IndianRupee, CheckCircle, Shield, Clock, Users, 
-  Star, ArrowRight, Filter, Lock, HelpCircle, MessageCircle, Key 
+  Star, ArrowRight, Filter, Lock, HelpCircle, MessageCircle, Key, Heart 
 } from 'lucide-react';
 
 const Home = () => {
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
+  const [favorites, setFavorites] = useState([]); 
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
   
@@ -19,11 +20,17 @@ const Home = () => {
 
   // Define Categories for rows
   const categories = ["1 BHK", "2 BHK", "Single Room", "Shared", "Villa"];
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
   useEffect(() => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user || null);
+      const currentUser = session?.user || null;
+      setUser(currentUser);
+      
+      if (currentUser) {
+        fetchFavorites(currentUser.id);
+      }
     };
     checkUser();
     fetchRooms();
@@ -32,7 +39,6 @@ const Home = () => {
   const fetchRooms = async (location = '', type = '') => {
     setLoading(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
       let queryUrl = `${apiUrl}/api/rooms`;
       const params = new URLSearchParams();
       if (location) params.append('location', location);
@@ -45,6 +51,40 @@ const Home = () => {
       console.error("Error fetching rooms:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchFavorites = async (userId) => {
+    try {
+      const res = await axios.get(`${apiUrl}/api/favorites/${userId}`);
+      setFavorites(res.data); 
+    } catch (err) {
+      console.error("Error fetching favorites:", err);
+    }
+  };
+
+  const toggleFavorite = async (e, roomId) => {
+    e.preventDefault(); 
+    e.stopPropagation(); 
+
+    if (!user) {
+        navigate('/login');
+        return;
+    }
+
+    if (favorites.includes(roomId)) {
+        setFavorites(prev => prev.filter(id => id !== roomId));
+    } else {
+        setFavorites(prev => [...prev, roomId]);
+    }
+
+    try {
+        await axios.post(`${apiUrl}/api/favorites/toggle`, {
+            user_id: user.id,
+            room_id: roomId
+        });
+    } catch (err) {
+        console.error("Error toggling favorite:", err);
     }
   };
 
@@ -88,9 +128,9 @@ const Home = () => {
                 👋 Welcome back, {user.user_metadata?.name || 'Explorer'}
              </span>
           ) : (
-         <span className="inline-block py-1 px-3 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-sm font-semibold mb-6">
-            🚀 The #1 Rental Housing Platform
-         </span>
+             <span className="inline-block py-1 px-3 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-sm font-semibold mb-6">
+                🚀 The #1 Rental Housing Platform
+             </span>
           )}
 
           <h1 className="text-4xl md:text-7xl font-extrabold mb-6 tracking-tight leading-tight">
@@ -139,7 +179,7 @@ const Home = () => {
       {!user && (
         <div className="border-y border-gray-800 bg-gray-900/50">
           <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              {[
+             {[
                 { label: "Active Listings", val: "1,200+", icon: <CheckCircle className="text-green-400 mb-2 mx-auto" /> },
                 { label: "Happy Tenants", val: "850+", icon: <Users className="text-blue-400 mb-2 mx-auto" /> },
                 { label: "Cities Covered", val: "12", icon: <MapPin className="text-purple-400 mb-2 mx-auto" /> },
@@ -167,6 +207,7 @@ const Home = () => {
           <>
             {/* SCENARIO A: GUEST (Show Latest 3) */}
             {!user ? (
+               // GUEST VIEW
                <div>
                   <div className="flex justify-between items-end mb-8 px-2">
                     <div>
@@ -202,7 +243,7 @@ const Home = () => {
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                               {rooms.map(room => (
                                   <Link to={`/room/${room.id}`} key={room.id} className="group bg-gray-800 rounded-3xl overflow-hidden border border-gray-700 hover:border-blue-500 transition-all block">
-                                      <RoomCardContent room={room} isGuest={false} />
+                                      <RoomCardContent room={room} isGuest={false} isLiked={favorites.includes(room.id)} onToggleLike={(e) => toggleFavorite(e, room.id)} />
                                   </Link>
                               ))}
                           </div>
@@ -223,12 +264,8 @@ const Home = () => {
                                   {/* Horizontal Scroll Container */}
                                   <div className="flex gap-6 overflow-x-auto pb-4 snap-x mandatory scrollbar-hide px-2">
                                       {categoryRooms.map(room => (
-                                          <Link 
-                                            to={`/room/${room.id}`} 
-                                            key={room.id} 
-                                            className="min-w-[85vw] md:min-w-[350px] snap-center group bg-gray-800 rounded-3xl overflow-hidden border border-gray-700 hover:border-blue-500 transition-all block"
-                                          >
-                                              <RoomCardContent room={room} isGuest={false} />
+                                          <Link to={`/room/${room.id}`} key={room.id} className="min-w-[85vw] md:min-w-[350px] snap-center group bg-gray-800 rounded-3xl overflow-hidden border border-gray-700 hover:border-blue-500 transition-all block">
+                                              <RoomCardContent room={room} isGuest={false} isLiked={favorites.includes(room.id)} onToggleLike={(e) => toggleFavorite(e, room.id)} />
                                           </Link>
                                       ))}
                                   </div>
@@ -368,8 +405,9 @@ const Home = () => {
   );
 };
 
-// REUSABLE ROOM CARD COMPONENT
-const RoomCardContent = ({ room, isGuest }) => (
+
+// Room Card Content Component
+const RoomCardContent = ({ room, isGuest, isLiked, onToggleLike }) => (
     <>
         <div className="h-56 overflow-hidden relative">
             <img 
@@ -387,9 +425,24 @@ const RoomCardContent = ({ room, isGuest }) => (
                 </div>
             )}
 
-            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md text-white px-3 py-1 rounded-full font-bold border border-white/10 flex items-center gap-1 text-sm">
+            {/* Price Badge */}
+            <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md text-white px-3 py-1 rounded-full font-bold border border-white/10 flex items-center gap-1 text-sm">
                 <IndianRupee size={14} /> {room.price}
             </div>
+
+            {/* Heart Button */}
+            {!isGuest && (
+                <button 
+                    onClick={onToggleLike}
+                    className="absolute top-3 right-3 p-2 rounded-full bg-black/40 backdrop-blur-md hover:bg-black/60 transition-all border border-white/10 z-20"
+                >
+                    <Heart 
+                        size={20} 
+                        className={`transition-colors ${isLiked ? 'fill-red-500 text-red-500' : 'text-white'}`} 
+                    />
+                </button>
+            )}
+
             <div className="absolute bottom-4 left-4">
                 <span className="bg-blue-600/90 backdrop-blur-sm text-white text-xs font-bold px-2 py-1 rounded-lg mb-2 inline-block shadow-lg">
                     {room.property_type}
