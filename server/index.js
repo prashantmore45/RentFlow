@@ -1,10 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { createClient } from '@supabase/supabase-js';
+
+// Import Routes
 import roomRoutes from './routes/roomRoutes.js';
 import applicationRoutes from './routes/applicationRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
+import favoriteRoutes from './routes/favoriteRoutes.js'; 
 
 dotenv.config();
 
@@ -14,17 +16,14 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cors());
 
+// ROUTES 
 app.use('/api/rooms', roomRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/profiles', profileRoutes);
-
-export const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_KEY
-);
+app.use('/api/favorites', favoriteRoutes); 
 
 app.get('/', (req, res) => {
-    res.send('API is running... Room Finder Backend is Live!');
+    res.send('API is running... RentFlow Backend is Live!');
 });
 
 app.listen(PORT, () => {

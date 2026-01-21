@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
-import { LogOut, Home, PlusSquare, LayoutDashboard, Menu, X, User } from 'lucide-react';
+import { LogOut, Home, PlusSquare, LayoutDashboard, Menu, X, User, Heart } from 'lucide-react';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -76,6 +76,9 @@ const Navbar = () => {
                 <Link to="/profile" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-lg transition-all flex items-center gap-2">
                   <User size={18} /> Profile
                 </Link>
+                <Link to="/favorites" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-lg transition-all flex items-center gap-2">
+                  <Heart size={18}   /> My Favorites
+                </Link>
                 
                 <div className="flex items-center gap-4 ml-2 pl-4 border-l border-gray-700">
                   <button onClick={handleLogout} className="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2 text-sm font-bold border border-red-500/20">
@@ -127,6 +130,9 @@ const Navbar = () => {
                 </Link>
                 <Link to="/profile" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
                   <User size={20} /> Profile
+                </Link>
+                <Link to="/favorites" className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
+                  <Heart size={20} className="text-pink-400" /> My Favorites
                 </Link>
                 <button onClick={handleLogout} className="w-full text-left text-red-400 hover:bg-red-500/10 hover:text-red-300 block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 mt-2 border-t border-gray-800 transition-colors">
                   <LogOut size={20} /> Logout

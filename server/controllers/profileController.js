@@ -1,4 +1,4 @@
-import { supabase } from '../index.js';
+import { supabase } from '../supabase.js';
 
 // GET PROFILE (By ID)
 export const getProfile = async (req, res) => {

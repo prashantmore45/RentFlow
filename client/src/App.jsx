@@ -9,6 +9,7 @@ import Footer from './components/Footer';
 import EditRoom from './pages/EditRoom';
 import Profile from './pages/Profile';
 import Legal from './pages/Legal';
+import Favorites from './pages/Favorites';
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
             <Route path="/edit-room/:id" element={<EditRoom />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/legal/:type" element={<Legal />} />
+            <Route path="/favorites" element={<Favorites />} />
           </Routes>
         </div>
       </div>

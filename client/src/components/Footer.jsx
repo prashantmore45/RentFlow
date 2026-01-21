@@ -60,6 +60,10 @@ const Footer = () => {
                 <Link to="/login" className="hover:text-blue-400 transition-colors">Login / Sign Up</Link>
               </li>
 
+              <li>
+                <Link to="/favorites" className="hover:text-blue-400 transition-colors">My Favorites ❤️</Link>
+              </li>
+
             </ul>
           </div>
 

@@ -1,4 +1,4 @@
-import { supabase } from '../index.js';
+import { supabase } from '../supabase.js';
 
 // 1. GET ROOMS (With Search Filter)
 export const getRooms = async (req, res) => {
@@ -92,51 +92,4 @@ export const updateRoom = async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-};
-
-// 7. GET FAVORITE ROOMS
-export const getFavorite = async (req, res) => {
-    const { userId } = req.params;
-  try {
-    const { data, error } = await supabase
-      .from('favorites')
-      .select('room_id')
-      .eq('user_id', userId);
-
-    if (error) throw error;
-   
-    res.json(data.map(item => item.room_id)); 
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// 8. Toggle Favorite Room
-export const toggleFavorite = async (req, res) => {
-    const { user_id, room_id } = req.body;
-  try {
-    const { data: existing } = await supabase
-      .from('favorites')
-      .select('*')
-      .eq('user_id', user_id)
-      .eq('room_id', room_id)
-      .single();
-
-    if (existing) {
-      const { error } = await supabase
-        .from('favorites')
-        .delete()
-        .eq('id', existing.id);
-      if (error) throw error;
-      res.json({ status: 'removed' });
-    } else {
-      const { error } = await supabase
-        .from('favorites')
-        .insert([{ user_id, room_id }]);
-      if (error) throw error;
-      res.json({ status: 'added' });
-    }
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
 };

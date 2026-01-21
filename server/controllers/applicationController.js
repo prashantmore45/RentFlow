@@ -1,4 +1,4 @@
-import { supabase } from '../index.js';
+import { supabase } from '../supabase.js';
 
 export const applyForRoom = async (req, res) => {
     const { room_id, owner_id, message, applicant_id } = req.body;
