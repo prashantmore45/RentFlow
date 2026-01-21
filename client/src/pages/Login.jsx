@@ -1,104 +1,156 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { supabase } from '../supabase';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, ArrowRight, Home } from 'lucide-react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { Mail, Lock, User, Loader2, ArrowRight, AlertCircle } from 'lucide-react';
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  const [isSignUp, setIsSignUp] = useState(false); 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [isSignUp, setIsSignUp] = useState(location.state?.mode === 'signup');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  useEffect(() => {
-    if (location.state?.mode === 'signup') {
-      setIsSignUp(true);
-    }
-  }, [location.state]);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    fullName: ''
+  });
+
+  const toggleMode = () => {
+      setIsSignUp(!isSignUp);
+      setError('');
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleAuth = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: { data: { name: formData.fullName } },
+        });
         if (error) throw error;
-        alert("Account created! Check your email to verify.");
+        alert('Registration Successful! Check your email for verification.');
+        setIsSignUp(false);
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
+        });
         if (error) throw error;
         navigate('/');
       }
-    } catch (error) {
-      alert(error.message);
+    } catch (err) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-900 text-white">
+    <div 
+      className="min-h-screen flex items-center justify-center bg-gray-900 bg-cover bg-center px-4"
+      style={{
+        backgroundImage: `
+          linear-gradient(rgba(17, 24, 39, 0.8), rgba(17, 24, 39, 0.8)), 
+          url('https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')
+        `
+      }}
+    >
       
-      <div className="hidden md:flex w-1/2 bg-gradient-to-br from-blue-600 to-purple-700 items-center justify-center relative overflow-hidden">
-        <div className="absolute w-96 h-96 bg-white/10 rounded-full blur-3xl -top-10 -left-10"></div>
-        <div className="absolute w-96 h-96 bg-black/10 rounded-full blur-3xl bottom-0 right-0"></div>
-        
-        <div className="text-center z-10 p-12">
-            <div className="bg-white/20 p-4 rounded-2xl inline-block mb-6 backdrop-blur-lg">
-                <Home size={48} />
-            </div>
-            <h1 className="text-5xl font-bold mb-4">Welcome Back</h1>
-            <p className="text-xl text-blue-100">Your journey to finding the perfect space continues here.</p>
-        </div>
-      </div>
+      <div className="relative z-10 w-full max-w-md">
 
-      <div className="w-full md:w-1/2 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
-            <h2 className="text-3xl font-bold mb-2">{isSignUp ? "Create Account" : "Sign In"}</h2>
-            <p className="text-gray-400 mb-8">
-                {isSignUp ? "Join the community today." : "Enter your details to proceed."}
+        {/* Auth Card */}
+        <div className="bg-gray-800/80 backdrop-blur-xl border border-gray-700 p-8 rounded-3xl shadow-2xl">
+            <h2 className="text-2xl font-bold text-white mb-2 text-center">
+                {isSignUp ? 'Create an Account' : 'Welcome Back'}
+            </h2>
+            <p className="text-gray-400 text-center mb-6">
+                {isSignUp ? 'Join thousands of users finding their home.' : 'Enter your details to access your account.'}
             </p>
 
-            <form onSubmit={handleAuth} className="space-y-6">
-                <div className="relative">
-                    <Mail className="absolute left-4 top-4 text-gray-500" size={20} />
+            {error && (
+                <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-3 rounded-xl mb-6 flex items-start gap-3 text-sm">
+                    <AlertCircle size={18} className="shrink-0 mt-0.5" />
+                    {error}
+                </div>
+            )}
+
+            <form onSubmit={handleAuth} className="space-y-4">
+                
+                {isSignUp && (
+                    <div className="relative group">
+                        <User className="absolute left-4 top-3.5 text-gray-400 group-focus-within:text-purple-400 transition-colors" size={20} />
+                        <input 
+                            name="fullName"
+                            type="text" 
+                            placeholder="Full Name"
+                            required={isSignUp}
+                            onChange={handleChange}
+                            className="w-full bg-gray-900/60 border border-gray-600 rounded-xl py-3 pl-12 pr-4 text-white focus:ring-2 focus:ring-purple-500 outline-none transition-all placeholder-gray-500"
+                        />
+                    </div>
+                )}
+
+                <div className="relative group">
+                    <Mail className="absolute left-4 top-3.5 text-gray-400 group-focus-within:text-blue-400 transition-colors" size={20} />
                     <input 
+                        name="email"
                         type="email" 
                         placeholder="Email Address"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full pl-12 bg-gray-800 border border-gray-700 p-4 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                        required
+                        onChange={handleChange}
+                        className="w-full bg-gray-900/60 border border-gray-600 rounded-xl py-3 pl-12 pr-4 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-gray-500"
                     />
                 </div>
 
-                <div className="relative">
-                    <Lock className="absolute left-4 top-4 text-gray-500" size={20} />
+                <div className="relative group">
+                    <Lock className="absolute left-4 top-3.5 text-gray-400 group-focus-within:text-blue-400 transition-colors" size={20} />
                     <input 
+                        name="password"
                         type="password" 
                         placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full pl-12 bg-gray-800 border border-gray-700 p-4 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                        required
+                        onChange={handleChange}
+                        className="w-full bg-gray-900/60 border border-gray-600 rounded-xl py-3 pl-12 pr-4 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-gray-500"
                     />
                 </div>
 
-                <button disabled={loading} className="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all">
-                    {loading ? "Processing..." : (isSignUp ? "Sign Up" : "Login")}
-                    {!loading && <ArrowRight size={20} />}
+                <button 
+                    type="submit" 
+                    disabled={loading}
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 mt-2"
+                >
+                    {loading ? <Loader2 className="animate-spin" /> : (
+                        <>
+                            {isSignUp ? 'Sign Up' : 'Sign In'} <ArrowRight size={20} />
+                        </>
+                    )}
                 </button>
             </form>
 
-            <p className="mt-8 text-center text-gray-400">
-                {isSignUp ? "Already have an account?" : "Don't have an account?"} 
+            <div className="mt-6 text-center text-sm">
+                <span className="text-gray-400">
+                    {isSignUp ? "Already have an account?" : "Don't have an account?"}
+                </span>
                 <button 
-                    onClick={() => setIsSignUp(!isSignUp)}
-                    className="ml-2 text-blue-400 font-semibold hover:underline"
+                    onClick={toggleMode}
+                    className="ml-2 text-blue-400 hover:text-blue-300 font-bold hover:underline transition-colors"
                 >
-                    {isSignUp ? "Login" : "Sign Up"}
+                    {isSignUp ? 'Log In' : 'Sign Up'}
                 </button>
+            </div>
+            <p className="text-center text-gray-500 text-xs mt-8">
+              © {new Date().getFullYear()} RentFlow. Secure Authentication by Supabase.
             </p>
         </div>
       </div>
