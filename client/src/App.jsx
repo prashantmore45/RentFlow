@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import Footer from './components/Footer';
 import EditRoom from './pages/EditRoom';
 import Profile from './pages/Profile';
+import Legal from './pages/Legal';
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/edit-room/:id" element={<EditRoom />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/legal/:type" element={<Legal />} />
           </Routes>
         </div>
       </div>

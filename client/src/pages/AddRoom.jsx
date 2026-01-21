@@ -20,8 +20,8 @@ const AddRoom = () => {
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        alert("You must be logged in to post a room!");
-        navigate('/login'); 
+        navigate('/login', { replace: true }); 
+        return; 
       } else {
         setUser(user);
       }

@@ -56,7 +56,7 @@ const Home = () => {
         <div className="relative z-10 text-center w-full max-w-4xl px-4">
           
           <h1 className="text-3xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-purple-200 leading-tight">
-            Find Your Perfect Room
+            Find Your Flow with <span className="text-white">RentFlow</span>
           </h1>
           
           <p className="text-lg md:text-xl text-gray-300 mb-8 md:mb-10">
