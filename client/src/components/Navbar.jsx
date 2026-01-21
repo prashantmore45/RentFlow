@@ -55,7 +55,7 @@ const Navbar = () => {
                 <circle cx="12" cy="10" r="3" fill="#111827" />
             </svg>
             <span className="text-xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent tracking-tight">
-                RoomFinder
+              RentFlow
             </span>
           </Link>
 
