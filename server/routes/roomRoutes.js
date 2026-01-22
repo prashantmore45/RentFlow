@@ -3,13 +3,16 @@ import { createRoom, getRooms, getRoomById, getMyRooms, deleteRoom, updateRoom }
 
 const router = express.Router();
 
-router.get('/', getRooms);     
-router.post('/', createRoom); 
-router.get('/:id', getRoomById);
+// Public Routes
+router.get('/', getRooms);          
+router.get('/:id', getRoomById);   
 
-router.get('/my-rooms/:user_id', getMyRooms);
+// Protected/User Routes
+router.post('/', createRoom);
 router.delete('/:id', deleteRoom);
 router.put('/:id', updateRoom);
 
+// Dashboard Route
+router.get('/my-rooms/:ownerId', getMyRooms); 
 
 export default router;

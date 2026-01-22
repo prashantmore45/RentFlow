@@ -10,6 +10,7 @@ import EditRoom from './pages/EditRoom';
 import Profile from './pages/Profile';
 import Legal from './pages/Legal';
 import Favorites from './pages/Favorites';
+import Chat from './pages/Chat';
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/legal/:type" element={<Legal />} />
             <Route path="/favorites" element={<Favorites />} />
+            <Route path="/chat/:roomId/:landlordId" element={<Chat />} />
           </Routes>
         </div>
       </div>

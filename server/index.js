@@ -8,6 +8,7 @@ import applicationRoutes from './routes/applicationRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
 import favoriteRoutes from './routes/favoriteRoutes.js'; 
 import reviewRoutes from './routes/reviewRoutes.js';
+import chatRoutes from './routes/chatRoutes.js';
 
 dotenv.config();
 
@@ -23,10 +24,13 @@ app.use('/api/applications', applicationRoutes);
 app.use('/api/profiles', profileRoutes);
 app.use('/api/favorites', favoriteRoutes); 
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/chat', chatRoutes);
+
 
 app.get('/', (req, res) => {
     res.send('API is running... RentFlow Backend is Live!');
 });
+
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);

@@ -291,7 +291,7 @@ const RoomDetails = () => {
                                 {applying ? 'Sending...' : <><Send size={18}/> Apply Now</>}
                             </button>
                             <button 
-                                onClick={() => alert("Chat feature coming in next update!")}
+                                onClick={() => navigate(`/chat/${room.id}/${room.owner_id}`)}
                                 className="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-4 rounded-xl transition-all flex justify-center items-center gap-2 border border-gray-600"
                             >
                                 <MessageCircle size={18}/> Chat with Landlord
