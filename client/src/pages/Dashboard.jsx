@@ -94,7 +94,7 @@ const Dashboard = () => {
       alert("Deleted.");
     } catch (error) { 
       console.error("Failed to delete room:", error);
-      alert("Failed to delete.");
+      alert("Failed to delete room. Please try again or contact support.");
     }
   };
 
@@ -105,7 +105,7 @@ const Dashboard = () => {
       setReceivedApps(prev => prev.map(app => app.id === appId ? { ...app, status: newStatus } : app));
     } catch (error) { 
       console.error("Failed to update application status:", error);
-      alert("Failed to update."); 
+      alert("Failed to update application status. Please try again."); 
     }
   };
 
@@ -138,19 +138,70 @@ const Dashboard = () => {
         {/* 1. SENT APPS */}
         {activeTab === 'sent' && (
           <div className="space-y-4">
-            {sentApps.length === 0 ? <p className="text-gray-500">No applications sent.</p> : sentApps.map(app => (
-              <div key={app.id} className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden flex flex-col md:flex-row">
-                 <div className="w-full md:w-48 h-48 md:h-auto relative bg-gray-700 shrink-0">
-                    <img src={app.rooms?.image_url} alt="Room" className="w-full h-full object-cover"/>
-                 </div>
-                 <div className="p-6 flex flex-col justify-center flex-grow">
-                    <h3 className="text-xl font-bold">{app.rooms?.title}</h3>
-                    <span className={`inline-block w-fit px-2 py-0.5 rounded text-xs border uppercase my-2 ${getStatusColor(app.status)}`}>{app.status}</span>
-                    <div className="flex justify-between items-center mt-2">
-                        <span className="text-gray-400 text-sm">Landlord ID: {app.owner_id.slice(0,5)}...</span>
-                        <Link to={`/chat/${app.room_id}/${app.owner_id}`} className="bg-gray-700 p-2 rounded-lg text-blue-400 hover:bg-gray-600"><MessageCircle size={20}/></Link>
+            {sentApps.length === 0 ? (
+              <p className="text-gray-500">No applications sent.</p>
+            ) : sentApps.map(app => (
+              <div
+                key={app.id}
+                className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden flex flex-col md:flex-row"
+              >
+                {/* LEFT: ROOM IMAGE */}
+                <div className="w-full md:w-56 h-48 md:h-auto relative bg-gray-700 shrink-0">
+                  <img
+                    src={app.rooms?.image_url || "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267"}
+                    alt={app.rooms?.title}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267";
+                    }}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded-md">
+                    ₹{app.rooms?.price}/mo
+                  </div>
+                </div>
+
+                {/* RIGHT */}
+                <div className="p-6 flex flex-col justify-between flex-grow">
+                  <div>
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="text-xl font-bold line-clamp-1">
+                        {app.rooms?.title}
+                      </h3>
+                      <span className={`px-3 py-1 rounded-full text-xs border capitalize font-bold ${getStatusColor(app.status)}`}>
+                        {app.status}
+                      </span>
                     </div>
-                 </div>
+
+                    <p className="text-sm text-gray-400 mb-1">
+                      Landlord:{' '}
+                      <span className="text-blue-400 font-medium">
+                        User…{app.owner_id.slice(0,4)}
+                      </span>
+                    </p>
+
+                    <p className="text-sm text-gray-400 mb-3">
+                      {app.rooms?.location}
+                    </p>
+
+                    <div className="bg-gray-900/50 p-3 rounded-lg border border-gray-700/50">
+                      <p className="text-xs text-gray-500 mb-1">Your Message:</p>
+                      <p className="text-gray-300 italic text-sm">
+                        "{app.message}"
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* CHAT ICON */}
+                  <div className="flex justify-end mt-4">
+                    <Link
+                      to={`/chat/${app.room_id}/${app.owner_id}`}
+                      className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 p-2 rounded-lg border border-blue-500/20"
+                    >
+                      <MessageCircle size={20} />
+                    </Link>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -183,16 +234,48 @@ const Dashboard = () => {
         {/* 3. LISTINGS */}
         {activeTab === 'listings' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-             {myRooms.map(room => (
-                 <div key={room.id} className="bg-gray-800 rounded-2xl p-4 border border-gray-700">
-                     <img src={room.image_url} className="w-full h-40 object-cover rounded-xl mb-4 bg-gray-700"/>
-                     <h3 className="font-bold truncate">{room.title}</h3>
-                     <div className="flex gap-2 mt-4">
-                         <button onClick={() => navigate(`/edit-room/${room.id}`)} className="flex-1 bg-blue-500/10 text-blue-400 py-2 rounded-lg"><Edit size={16} className="mx-auto"/></button>
-                         <button onClick={() => handleDeleteRoom(room.id)} className="flex-1 bg-red-500/10 text-red-400 py-2 rounded-lg"><Trash2 size={16} className="mx-auto"/></button>
-                     </div>
-                 </div>
-             ))}
+            {myRooms.length === 0 ? (
+              <p className="text-gray-500">You haven't posted any rooms yet.</p>
+            ) : myRooms.map(room => (
+              <div key={room.id} className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden group hover:border-green-500/50 transition-all">
+
+                <div className="h-48 w-full relative bg-gray-700">
+                  <img
+                    src={room.image_url || "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267"}
+                    alt={room.title}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267";
+                    }}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-md">
+                    ₹{room.price}/mo
+                  </div>
+                </div>
+
+                <div className="p-5">
+                  <h3 className="text-lg font-bold truncate">{room.title}</h3>
+                  <p className="text-sm text-gray-400 mb-4">{room.location}</p>
+
+                  <div className="flex gap-3 mt-4">
+                    <button
+                      onClick={() => navigate(`/edit-room/${room.id}`)}
+                      className="flex-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 py-2 rounded-lg flex items-center justify-center gap-2"
+                    >
+                      <Edit size={16} /> Edit
+                    </button>
+
+                    <button
+                      onClick={() => handleDeleteRoom(room.id)}
+                      className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 py-2 rounded-lg flex items-center justify-center gap-2"
+                    >
+                      <Trash2 size={16} /> Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
