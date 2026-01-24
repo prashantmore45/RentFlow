@@ -2,7 +2,7 @@
 
 > A full-stack real-time housing marketplace connecting tenants and landlords with a streamlined application workflow.
 
-![RentFlow Banner](https://willing-rose-3k8apctlwr.edgeone.app/Screenshot%202026-01-21%20220737.png)
+![RentFlow Banner](https://image2url.com/r2/default/images/1769262461584-a4efb513-2d7e-4981-b035-75f2981b5242.png)
 
 
 <div align="center">
