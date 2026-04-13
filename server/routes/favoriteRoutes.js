@@ -5,28 +5,77 @@ import { validateRequest, createFavoriteSchema } from '../middleware/validation.
 
 const router = express.Router();
 
-// GET Favorites for a user (AUTHORIZED)
-router.get('/:userId', verifyToken, async (req, res) => {
+// TOGGLE Favorite (backward compatible - AUTHORIZED) - MUST BE BEFORE /:userId
+router.post('/toggle/:roomId', verifyToken, async (req, res) => {
   try {
     if (!req.user) {
       return res.status(401).json({ error: 'Unauthorized - Authentication required' });
     }
 
-    const { userId } = req.params;
+    const roomId = req.params.roomId || req.body.room_id;
+    const user_id = req.user.id;
 
-    // Users can only fetch their own favorites
-    if (userId !== req.user.id) {
-      return res.status(403).json({ error: 'Forbidden - Cannot access other users\' favorites' });
+    if (!roomId) {
+      return res.status(400).json({ error: 'Room ID is required' });
     }
 
-    const { data, error } = await supabase
+    const { data: existing } = await supabase
       .from('favorites')
-      .select('room_id, id, created_at')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false });
+      .select('id')
+      .eq('user_id', user_id)
+      .eq('room_id', roomId)
+      .single();
 
-    if (error) throw error;
-    res.json(data);
+    if (existing) {
+      await supabase
+        .from('favorites')
+        .delete()
+        .eq('id', existing.id);
+      res.json({ status: 'removed' });
+    } else {
+      await supabase
+        .from('favorites')
+        .insert([{ user_id, room_id: roomId, created_at: new Date().toISOString() }]);
+      res.json({ status: 'added' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Alternative toggle endpoint using body params (backward compatibility)
+router.post('/toggle', verifyToken, async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized - Authentication required' });
+    }
+
+    const { room_id: roomId } = req.body;
+    const user_id = req.user.id;
+
+    if (!roomId) {
+      return res.status(400).json({ error: 'Room ID is required' });
+    }
+
+    const { data: existing } = await supabase
+      .from('favorites')
+      .select('id')
+      .eq('user_id', user_id)
+      .eq('room_id', roomId)
+      .single();
+
+    if (existing) {
+      await supabase
+        .from('favorites')
+        .delete()
+        .eq('id', existing.id);
+      res.json({ status: 'removed' });
+    } else {
+      await supabase
+        .from('favorites')
+        .insert([{ user_id, room_id: roomId, created_at: new Date().toISOString() }]);
+      res.json({ status: 'added' });
+    }
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -113,35 +162,28 @@ router.delete('/:favoriteId', verifyToken, async (req, res) => {
   }
 });
 
-// TOGGLE Favorite (backward compatible - AUTHORIZED)
-router.post('/toggle/:roomId', verifyToken, async (req, res) => {
+// GET Favorites for a user (AUTHORIZED) - GENERIC ROUTE, MUST BE LAST
+router.get('/:userId', verifyToken, async (req, res) => {
   try {
     if (!req.user) {
       return res.status(401).json({ error: 'Unauthorized - Authentication required' });
     }
 
-    const { roomId } = req.params;
-    const user_id = req.user.id;
+    const { userId } = req.params;
 
-    const { data: existing } = await supabase
-      .from('favorites')
-      .select('id')
-      .eq('user_id', user_id)
-      .eq('room_id', roomId)
-      .single();
-
-    if (existing) {
-      await supabase
-        .from('favorites')
-        .delete()
-        .eq('id', existing.id);
-      res.json({ status: 'removed' });
-    } else {
-      await supabase
-        .from('favorites')
-        .insert([{ user_id, room_id: roomId, created_at: new Date().toISOString() }]);
-      res.json({ status: 'added' });
+    // Users can only fetch their own favorites
+    if (userId !== req.user.id) {
+      return res.status(403).json({ error: 'Forbidden - Cannot access other users\' favorites' });
     }
+
+    const { data, error } = await supabase
+      .from('favorites')
+      .select('room_id, id, created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

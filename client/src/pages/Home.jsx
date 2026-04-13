@@ -56,7 +56,9 @@ const Home = () => {
   const fetchFavorites = async (userId) => {
     try {
       const res = await api.get(`/api/favorites/${userId}`);
-      setFavorites(res.data); 
+      // Extract room_ids from the returned objects
+      const roomIds = res.data.map(fav => fav.room_id);
+      setFavorites(roomIds); 
     } catch (err) {
       console.error("Error fetching favorites:", err);
     }
@@ -71,6 +73,7 @@ const Home = () => {
         return;
     }
 
+    // Optimistically update UI
     if (favorites.includes(roomId)) {
         setFavorites(prev => prev.filter(id => id !== roomId));
     } else {
@@ -78,12 +81,15 @@ const Home = () => {
     }
 
     try {
-        await api.post(`/api/favorites/toggle`, {
-            user_id: user.id,
-            room_id: roomId
+        const res = await api.post(`/api/favorites/toggle/${roomId}`, {
+            user_id: user.id
         });
+        // Refetch favorites to ensure sync
+        await fetchFavorites(user.id);
     } catch (err) {
         console.error("Error toggling favorite:", err);
+        // Refetch to revert on error
+        await fetchFavorites(user.id);
     }
   };
 

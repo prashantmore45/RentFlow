@@ -18,13 +18,16 @@ const Favorites = () => {
       }
 
       try {
-        const { data: likedIds } = await api.get(`/api/favorites/${user.id}`);
+        const { data: favoritesList } = await api.get(`/api/favorites/${user.id}`);
         
-        if (likedIds.length === 0) {
+        if (favoritesList.length === 0) {
             setLoading(false);
             return;
         }
 
+        // Extract room IDs from favorite objects
+        const likedIds = favoritesList.map(fav => fav.room_id);
+        
         const { data: allRooms } = await api.get(`/api/rooms`);
         const likedRooms = allRooms.filter(room => likedIds.includes(room.id));
         
