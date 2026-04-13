@@ -146,7 +146,7 @@ const Dashboard = () => {
                 className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden flex flex-col md:flex-row"
               >
                 {/* LEFT: ROOM IMAGE */}
-                <div className="w-full md:w-56 h-48 md:h-auto relative bg-gray-700 shrink-0">
+                <div className="w-full md:w-56 h-40 md:h-auto relative bg-gray-700 shrink-0">
                   <img
                     src={app.rooms?.image_url || "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267"}
                     alt={app.rooms?.title}
@@ -162,43 +162,43 @@ const Dashboard = () => {
                 </div>
 
                 {/* RIGHT */}
-                <div className="p-6 flex flex-col justify-between flex-grow">
+                <div className="p-4 md:p-6 flex flex-col justify-between flex-grow min-w-0">
                   <div>
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-xl font-bold line-clamp-1">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-0 mb-2">
+                      <h3 className="text-lg md:text-xl font-bold line-clamp-2 flex-1">
                         {app.rooms?.title}
                       </h3>
-                      <span className={`px-3 py-1 rounded-full text-xs border capitalize font-bold ${getStatusColor(app.status)}`}>
+                      <span className={`px-2 py-1 rounded-full text-xs border capitalize font-bold whitespace-nowrap ${getStatusColor(app.status)}`}>
                         {app.status}
                       </span>
                     </div>
 
-                    <p className="text-sm text-gray-400 mb-1">
+                    <p className="text-xs md:text-sm text-gray-400 mb-1 truncate">
                       Landlord:{' '}
                       <span className="text-blue-400 font-medium">
                         User…{app.owner_id.slice(0,4)}
                       </span>
                     </p>
 
-                    <p className="text-sm text-gray-400 mb-3">
+                    <p className="text-xs md:text-sm text-gray-400 mb-3 line-clamp-1">
                       {app.rooms?.location}
                     </p>
 
-                    <div className="bg-gray-900/50 p-3 rounded-lg border border-gray-700/50">
+                    <div className="bg-gray-900/50 p-2 md:p-3 rounded-lg border border-gray-700/50">
                       <p className="text-xs text-gray-500 mb-1">Your Message:</p>
-                      <p className="text-gray-300 italic text-sm">
+                      <p className="text-gray-300 italic text-xs md:text-sm line-clamp-2">
                         "{app.message}"
                       </p>
                     </div>
                   </div>
 
                   {/* CHAT ICON */}
-                  <div className="flex justify-end mt-4">
+                  <div className="flex justify-end mt-3 md:mt-4">
                     <Link
                       to={`/chat/${app.room_id}/${app.owner_id}`}
                       className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 p-2 rounded-lg border border-blue-500/20"
                     >
-                      <MessageCircle size={20} />
+                      <MessageCircle size={18} />
                     </Link>
                   </div>
                 </div>
@@ -211,20 +211,20 @@ const Dashboard = () => {
         {activeTab === 'received' && (
           <div className="space-y-4">
             {receivedApps.length === 0 ? <p className="text-gray-500">No applications received.</p> : receivedApps.map(app => (
-              <div key={app.id} className="bg-gray-800 p-6 rounded-2xl border border-gray-700">
-                 <div className="flex justify-between mb-4">
-                    <h3 className="font-bold">Applicant: <span className="text-purple-400">{app.profiles?.full_name || 'User'}</span></h3>
-                    <span className={`px-2 py-1 rounded text-xs border uppercase ${getStatusColor(app.status)}`}>{app.status}</span>
+              <div key={app.id} className="bg-gray-800 p-4 md:p-6 rounded-2xl border border-gray-700">
+                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-4 mb-4">
+                    <h3 className="font-bold text-sm md:text-base truncate">Applicant: <span className="text-purple-400">{app.profiles?.full_name || 'User'}</span></h3>
+                    <span className={`px-2 py-1 rounded text-xs border uppercase whitespace-nowrap ${getStatusColor(app.status)}`}>{app.status}</span>
                  </div>
-                 <p className="text-gray-400 text-sm mb-4">Property: {app.rooms?.title}</p>
-                 <div className="flex gap-2">
+                 <p className="text-gray-400 text-xs md:text-sm mb-4 line-clamp-1">Property: {app.rooms?.title}</p>
+                 <div className="flex flex-wrap gap-2">
                     {app.status === 'pending' && (
                        <>
-                         <button onClick={() => handleStatusUpdate(app.id, 'accepted')} className="px-4 py-2 bg-green-500/10 text-green-400 rounded-lg hover:bg-green-500/20">Accept</button>
-                         <button onClick={() => handleStatusUpdate(app.id, 'rejected')} className="px-4 py-2 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20">Reject</button>
+                         <button onClick={() => handleStatusUpdate(app.id, 'accepted')} className="px-3 md:px-4 py-2 text-xs md:text-sm bg-green-500/10 text-green-400 rounded-lg hover:bg-green-500/20 whitespace-nowrap">Accept</button>
+                         <button onClick={() => handleStatusUpdate(app.id, 'rejected')} className="px-3 md:px-4 py-2 text-xs md:text-sm bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20 whitespace-nowrap">Reject</button>
                        </>
                     )}
-                    <Link to={`/chat/${app.room_id}/${app.applicant_id}`} className="px-4 py-2 bg-blue-500/10 text-blue-400 rounded-lg hover:bg-blue-500/20 flex items-center gap-2"><MessageCircle size={18}/> Chat</Link>
+                    <Link to={`/chat/${app.room_id}/${app.applicant_id}`} className="px-3 md:px-4 py-2 text-xs md:text-sm bg-blue-500/10 text-blue-400 rounded-lg hover:bg-blue-500/20 flex items-center gap-1 md:gap-2 whitespace-nowrap"><MessageCircle size={16}/> Chat</Link>
                  </div>
               </div>
             ))}
@@ -233,13 +233,13 @@ const Dashboard = () => {
 
         {/* 3. LISTINGS */}
         {activeTab === 'listings' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {myRooms.length === 0 ? (
               <p className="text-gray-500">You haven't posted any rooms yet.</p>
             ) : myRooms.map(room => (
               <div key={room.id} className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden group hover:border-green-500/50 transition-all">
 
-                <div className="h-48 w-full relative bg-gray-700">
+                <div className="h-40 sm:h-48 w-full relative bg-gray-700">
                   <img
                     src={room.image_url || "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267"}
                     alt={room.title}
@@ -254,23 +254,23 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                <div className="p-5">
-                  <h3 className="text-lg font-bold truncate">{room.title}</h3>
-                  <p className="text-sm text-gray-400 mb-4">{room.location}</p>
+                <div className="p-4 md:p-5">
+                  <h3 className="text-base md:text-lg font-bold truncate">{room.title}</h3>
+                  <p className="text-xs md:text-sm text-gray-400 mb-4 line-clamp-1">{room.location}</p>
 
-                  <div className="flex gap-3 mt-4">
+                  <div className="flex gap-2 md:gap-3 mt-4">
                     <button
                       onClick={() => navigate(`/edit-room/${room.id}`)}
-                      className="flex-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 py-2 rounded-lg flex items-center justify-center gap-2"
+                      className="flex-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 py-2 rounded-lg flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm"
                     >
-                      <Edit size={16} /> Edit
+                      <Edit size={14} className="md:block" /> <span className="whitespace-nowrap">Edit</span>
                     </button>
 
                     <button
                       onClick={() => handleDeleteRoom(room.id)}
-                      className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 py-2 rounded-lg flex items-center justify-center gap-2"
+                      className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 py-2 rounded-lg flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm"
                     >
-                      <Trash2 size={16} /> Delete
+                      <Trash2 size={14} className="md:block" /> <span className="whitespace-nowrap">Delete</span>
                     </button>
                   </div>
                 </div>
@@ -286,24 +286,24 @@ const Dashboard = () => {
               <Link 
                   key={idx} 
                   to={`/chat/${chat.room.id}/${chat.partner.id}`}
-                  className="block bg-gray-800 p-6 rounded-2xl border border-gray-700 hover:border-yellow-400/50 transition-colors group"
+                  className="block bg-gray-800 p-4 md:p-6 rounded-2xl border border-gray-700 hover:border-yellow-400/50 transition-colors group min-w-0"
               >
-                 <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center font-bold text-lg text-white shadow-lg">
+                 <div className="flex items-start gap-3 md:gap-4 min-w-0">
+                    <div className="w-10 md:w-12 h-10 md:h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center font-bold text-base md:text-lg text-white shadow-lg shrink-0">
                         {chat.partner.full_name ? chat.partner.full_name[0] : 'U'}
                     </div>
-                    <div className="flex-1">
-                        <div className="flex justify-between items-center mb-1">
-                            <h3 className="font-bold text-lg text-white group-hover:text-yellow-400 transition-colors">
+                    <div className="flex-1 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-2 mb-1">
+                            <h3 className="font-bold text-base md:text-lg text-white group-hover:text-yellow-400 transition-colors truncate">
                                 {chat.partner.full_name || 'User'}
                             </h3>
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs text-gray-500 whitespace-nowrap">
                                 {new Date(chat.message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </span>
                         </div>
-                        <p className="text-sm text-blue-400 mb-2 font-medium">{chat.room.title}</p>
-                        <div className="bg-gray-900/50 p-3 rounded-xl border border-gray-700/50">
-                            <p className="text-gray-400 text-sm truncate italic">
+                        <p className="text-xs md:text-sm text-blue-400 mb-2 font-medium line-clamp-1">{chat.room.title}</p>
+                        <div className="bg-gray-900/50 p-2 md:p-3 rounded-xl border border-gray-700/50">
+                            <p className="text-gray-400 text-xs md:text-sm truncate italic">
                                 "{chat.message.content}"
                             </p>
                         </div>
