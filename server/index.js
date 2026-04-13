@@ -20,8 +20,12 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(express.json());
+
+// Normalize CLIENT_URL to remove trailing slash
+const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: clientUrl,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']
