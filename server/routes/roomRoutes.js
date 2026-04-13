@@ -1,18 +1,20 @@
 import express from 'express';
 import { createRoom, getRooms, getRoomById, getMyRooms, deleteRoom, updateRoom } from '../controllers/roomController.js';
+import { verifyToken } from '../middleware/auth.js';
+import { validateRequest, createRoomSchema, updateRoomSchema } from '../middleware/validation.js';
 
 const router = express.Router();
 
-// Public Routes
-router.get('/', getRooms);          
-router.get('/:id', getRoomById);   
+// Public Routes - No auth required
+router.get('/', getRooms);
+router.get('/:id', getRoomById);
 
-// Protected/User Routes
-router.post('/', createRoom);
-router.delete('/:id', deleteRoom);
-router.put('/:id', updateRoom);
+// Protected Routes - Auth required
+router.post('/', verifyToken, validateRequest(createRoomSchema), createRoom);
+router.put('/:id', verifyToken, validateRequest(updateRoomSchema), updateRoom);
+router.delete('/:id', verifyToken, deleteRoom);
 
-// Dashboard Route
-router.get('/my-rooms/:ownerId', getMyRooms); 
+// My Rooms Route - Auth required
+router.get('/my-rooms/:ownerId', verifyToken, getMyRooms);
 
 export default router;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api/axiosConfig';
 import { supabase } from '../supabase';
 import { 
   MapPin, IndianRupee, User, ArrowLeft, Send, ShieldCheck, 
@@ -27,8 +27,6 @@ const RoomDetails = () => {
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState('');
 
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-
   useEffect(() => {
     const getData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -36,7 +34,7 @@ const RoomDetails = () => {
 
       try {
         // Fetch Room Data
-        const roomRes = await axios.get(`${apiUrl}/api/rooms/${id}`);
+        const roomRes = await api.get(`/api/rooms/${id}`);
         setRoom(roomRes.data);
 
         // Fetch Landlord Profile
@@ -48,7 +46,7 @@ const RoomDetails = () => {
         if (profileData) setLandlord(profileData);
 
         // Fetch Reviews
-        const reviewsRes = await axios.get(`${apiUrl}/api/reviews/${id}`);
+        const reviewsRes = await api.get(`/api/reviews/${id}`);
         setReviews(reviewsRes.data);
         
         // Calculate Average Rating
@@ -76,7 +74,7 @@ const RoomDetails = () => {
 
     setApplying(true);
     try {
-      await axios.post(`${apiUrl}/api/applications`, {
+      await api.post(`/api/applications`, {
         room_id: room.id,
         owner_id: room.owner_id,
         applicant_id: currentUser.id,
@@ -97,7 +95,7 @@ const RoomDetails = () => {
       setSubmittingReview(true);
       try {
           // Post to Backend
-          const res = await axios.post(`${apiUrl}/api/reviews`, {
+          const res = await api.post(`/api/reviews`, {
               room_id: room.id,
               user_id: currentUser.id,
               rating: newRating,

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api/axiosConfig';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../supabase';
 import { Send, Inbox, Home, Trash2, Edit, MessageCircle, MessageSquare } from 'lucide-react';
@@ -35,9 +35,8 @@ const Dashboard = () => {
   };
 
   const fetchInbox = async (userId) => {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
       try {
-          const chatRes = await axios.get(`${apiUrl}/api/chat/my-chats/${userId}`);
+          const chatRes = await api.get(`/api/chat/my-chats/${userId}`);
           const processed = processInbox(chatRes.data, userId);
           setInboxChats(processed);
       } catch (err) {
@@ -46,15 +45,14 @@ const Dashboard = () => {
   };
 
   const loadDashboardData = async (userId) => {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
       try {
-        const sentRes = await axios.get(`${apiUrl}/api/applications/tenant/${userId}`);
+        const sentRes = await api.get(`/api/applications/tenant/${userId}`);
         setSentApps(sentRes.data);
 
-        const receivedRes = await axios.get(`${apiUrl}/api/applications/landlord/${userId}`);
+        const receivedRes = await api.get(`/api/applications/landlord/${userId}`);
         setReceivedApps(receivedRes.data);
 
-        const roomsRes = await axios.get(`${apiUrl}/api/rooms/my-rooms/${userId}`);
+        const roomsRes = await api.get(`/api/rooms/my-rooms/${userId}`);
         setMyRooms(roomsRes.data);
 
         await fetchInbox(userId); 
@@ -88,8 +86,7 @@ const Dashboard = () => {
   const handleDeleteRoom = async (roomId) => {
     if (!confirm("Are you sure?")) return;
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      await axios.delete(`${apiUrl}/api/rooms/${roomId}`);
+      await api.delete(`/api/rooms/${roomId}`);
       setMyRooms(prev => prev.filter(room => room.id !== roomId));
       alert("Deleted.");
     } catch (error) { 
@@ -100,8 +97,7 @@ const Dashboard = () => {
 
   const handleStatusUpdate = async (appId, newStatus) => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      await axios.patch(`${apiUrl}/api/applications/${appId}`, { status: newStatus });
+      await api.patch(`/api/applications/${appId}`, { status: newStatus });
       setReceivedApps(prev => prev.map(app => app.id === appId ? { ...app, status: newStatus } : app));
     } catch (error) { 
       console.error("Failed to update application status:", error);

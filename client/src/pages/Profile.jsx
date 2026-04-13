@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axiosConfig';
 import { supabase } from '../supabase';
 import { User, Mail, Camera, Save, Loader2, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -21,8 +21,7 @@ const Profile = () => {
       setUser(user);
 
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-        const res = await axios.get(`${apiUrl}/api/profiles/${user.id}`);
+const res = await api.get(`/api/profiles/${user.id}`);
         
         if (res.data) {
             setFullName(res.data.full_name || '');

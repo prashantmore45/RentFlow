@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api/axiosConfig';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
 import { MapPin, IndianRupee, ArrowLeft, HeartOff, ArrowRight } from 'lucide-react';
@@ -18,16 +18,14 @@ const Favorites = () => {
       }
 
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-        
-        const { data: likedIds } = await axios.get(`${apiUrl}/api/favorites/${user.id}`);
+        const { data: likedIds } = await api.get(`/api/favorites/${user.id}`);
         
         if (likedIds.length === 0) {
             setLoading(false);
             return;
         }
 
-        const { data: allRooms } = await axios.get(`${apiUrl}/api/rooms`);
+        const { data: allRooms } = await api.get(`/api/rooms`);
         const likedRooms = allRooms.filter(room => likedIds.includes(room.id));
         
         setRooms(likedRooms);

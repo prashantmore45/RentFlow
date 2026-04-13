@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axiosConfig';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../supabase';
 import { Home, Loader2, Save } from 'lucide-react';

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api/axiosConfig';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
 import { 
@@ -20,7 +20,6 @@ const Home = () => {
 
   // Define Categories for rows
   const categories = ["1 BHK", "2 BHK", "Single Room", "Shared", "Villa"];
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
   useEffect(() => {
     const checkUser = async () => {
@@ -39,13 +38,13 @@ const Home = () => {
   const fetchRooms = async (location = '', type = '') => {
     setLoading(true);
     try {
-      let queryUrl = `${apiUrl}/api/rooms`;
+      let path = '/api/rooms';
       const params = new URLSearchParams();
       if (location) params.append('location', location);
       if (type) params.append('type', type);
-      if (params.toString()) queryUrl += `?${params.toString()}`;
+      if (params.toString()) path += `?${params.toString()}`;
 
-      const res = await axios.get(queryUrl);
+      const res = await api.get(path);
       setRooms(res.data.reverse()); 
     } catch (err) {
       console.error("Error fetching rooms:", err);
@@ -56,7 +55,7 @@ const Home = () => {
 
   const fetchFavorites = async (userId) => {
     try {
-      const res = await axios.get(`${apiUrl}/api/favorites/${userId}`);
+      const res = await api.get(`/api/favorites/${userId}`);
       setFavorites(res.data); 
     } catch (err) {
       console.error("Error fetching favorites:", err);
@@ -79,7 +78,7 @@ const Home = () => {
     }
 
     try {
-        await axios.post(`${apiUrl}/api/favorites/toggle`, {
+        await api.post(`/api/favorites/toggle`, {
             user_id: user.id,
             room_id: roomId
         });

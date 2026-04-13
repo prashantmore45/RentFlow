@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom'; 
-import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import api from '../api/axiosConfig';
 import { supabase } from '../supabase';
 import { Send, User, Loader2 } from 'lucide-react';
 
@@ -12,11 +12,10 @@ const Chat = () => {
   const [loading, setLoading] = useState(true);
   
   const messagesEndRef = useRef(null);
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
   const fetchMessages = async (myId) => {
       try {
-          const res = await axios.get(`${apiUrl}/api/chat/${roomId}/${landlordId}/${myId}`);
+          const res = await api.get(`/api/chat/${roomId}/${landlordId}/${myId}`);
           setMessages(res.data);
           setLoading(false);
       } catch (err) {
