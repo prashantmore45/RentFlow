@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 
 // Import Routes
 import roomRoutes from './routes/roomRoutes.js';
@@ -18,6 +20,27 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Security Middleware
+app.use(helmet());
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5, // limit auth attempts to 5 per 15 minutes
+  skipSuccessfulRequests: true,
+  message: 'Too many login attempts, please try again later.'
+});
+
+app.use(limiter);
+
 // Middleware
 app.use(express.json());
 
@@ -33,6 +56,8 @@ app.use(cors({
 
 // ROUTES 
 app.use('/api/rooms', roomRoutes);
+// Apply stricter rate limiting to auth-related endpoints if they exist
+// app.use('/api/auth', authLimiter);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/profiles', profileRoutes);
 app.use('/api/favorites', favoriteRoutes); 
