@@ -20,16 +20,34 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Render puts exactly one reverse proxy in front of this app. Without this,
+// req.ip is the proxy's address and every visitor shares a single rate-limit
+// bucket. Trusting exactly one hop keeps X-Forwarded-For unspoofable.
+app.set('trust proxy', 1);
+
 // Security Middleware
 app.use(helmet());
+
+// Normalize CLIENT_URL to remove trailing slash
+const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
+
+// CORS runs before the limiter so 429 responses still carry CORS headers and
+// the browser can surface the real error instead of an opaque CORS failure.
+app.use(cors({
+  origin: clientUrl,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 300, // per IP, now that req.ip resolves to the real client
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => req.method === 'OPTIONS', // preflight shouldn't burn quota
 });
 
 const authLimiter = rateLimit({
@@ -43,16 +61,6 @@ app.use(limiter);
 
 // Middleware
 app.use(express.json());
-
-// Normalize CLIENT_URL to remove trailing slash
-const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
-
-app.use(cors({
-  origin: clientUrl,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
 
 // ROUTES 
 app.use('/api/rooms', roomRoutes);

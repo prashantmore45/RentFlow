@@ -58,8 +58,7 @@ const Chat = () => {
       if (!newMessage.trim()) return;
 
       try {
-          await axios.post(`${apiUrl}/api/chat`, {
-              sender_id: currentUser.id,
+          await api.post('/api/chat', {
               receiver_id: landlordId,
               room_id: roomId,
               content: newMessage

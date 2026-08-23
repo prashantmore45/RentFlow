@@ -6,6 +6,9 @@ export const createRoomSchema = Joi.object({
   description: Joi.string().min(10).max(2000).optional().trim(),
   location: Joi.string().min(3).max(200).required().trim(),
   price: Joi.number().positive().required(),
+  property_type: Joi.string().max(50).required().trim(),
+  tenant_preference: Joi.string().max(50).required().trim(),
+  contact_number: Joi.string().max(20).required().trim(),
   image_url: Joi.string().uri().optional().allow(null, ''),
   amenities: Joi.array().items(Joi.string()).optional(),
   max_occupants: Joi.number().positive().integer().optional()
@@ -16,6 +19,9 @@ export const updateRoomSchema = Joi.object({
   description: Joi.string().min(10).max(2000).optional().trim(),
   location: Joi.string().min(3).max(200).optional().trim(),
   price: Joi.number().positive().optional(),
+  property_type: Joi.string().max(50).optional().trim().allow(null, ''),
+  tenant_preference: Joi.string().max(50).optional().trim().allow(null, ''),
+  contact_number: Joi.string().max(20).optional().trim().allow(null, ''),
   image_url: Joi.string().uri().optional().allow(null, ''),
   amenities: Joi.array().items(Joi.string()).optional(),
   max_occupants: Joi.number().positive().integer().optional()
@@ -40,8 +46,8 @@ export const createMessageSchema = Joi.object({
 
 // Profile validation schemas
 export const updateProfileSchema = Joi.object({
-  full_name: Joi.string().min(2).max(100).optional().trim(),
-  bio: Joi.string().max(500).optional().trim(),
+  full_name: Joi.string().min(2).max(100).optional().trim().allow(null, ''),
+  bio: Joi.string().max(500).optional().trim().allow(null, ''),
   avatar_url: Joi.string().uri().optional().allow(null, ''),
   phone: Joi.string().pattern(/^[0-9\s\-\+\(\)]+$/).optional(),
   location: Joi.string().max(100).optional().trim()

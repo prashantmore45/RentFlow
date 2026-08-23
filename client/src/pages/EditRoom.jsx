@@ -21,8 +21,7 @@ const EditRoom = () => {
       if (!user) { navigate('/login'); return; }
 
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-        const res = await axios.get(`${apiUrl}/api/rooms/${id}`);
+        const res = await api.get(`/api/rooms/${id}`);
         
         // Security Check: Is this MY room?
         if (res.data.owner_id !== user.id) {
@@ -33,12 +32,12 @@ const EditRoom = () => {
 
         // Pre-fill form
         setFormData({
-            title: res.data.title,
-            location: res.data.location,
-            price: res.data.price,
-            property_type: res.data.property_type,
-            tenant_preference: res.data.tenant_preference,
-            contact_number: res.data.contact_number
+            title: res.data.title ?? '',
+            location: res.data.location ?? '',
+            price: res.data.price ?? '',
+            property_type: res.data.property_type ?? '',
+            tenant_preference: res.data.tenant_preference ?? '',
+            contact_number: res.data.contact_number ?? ''
         });
       } catch (err) {
         console.error(err);
@@ -56,8 +55,7 @@ const EditRoom = () => {
     e.preventDefault();
     setUpdating(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      await axios.put(`${apiUrl}/api/rooms/${id}`, formData);
+      await api.put(`/api/rooms/${id}`, formData);
       
       alert("Room updated successfully!");
       navigate('/dashboard');

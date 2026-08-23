@@ -67,8 +67,7 @@ const res = await api.get(`/api/profiles/${user.id}`);
     e.preventDefault();
     setUpdating(true);
     try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-        await axios.put(`${apiUrl}/api/profiles/${user.id}`, {
+        await api.put(`/api/profiles/${user.id}`, {
             full_name: fullName,
             bio: bio,
             avatar_url: avatarUrl

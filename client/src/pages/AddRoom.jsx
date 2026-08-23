@@ -82,9 +82,8 @@ const AddRoom = () => {
         finalImageUrl = data.publicUrl;
       }
 
-      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/rooms`, {
+      await api.post('/api/rooms', {
         ...formData,
-        owner_id: user.id,
         image_url: finalImageUrl 
       });
       

@@ -81,7 +81,7 @@ const Home = () => {
     }
 
     try {
-        const res = await api.post(`/api/favorites/toggle/${roomId}`, {
+        await api.post(`/api/favorites/toggle/${roomId}`, {
             user_id: user.id
         });
         // Refetch favorites to ensure sync
@@ -256,7 +256,7 @@ const Home = () => {
                   ) : (
                       // CATEGORY ROWS
                       categories.map((category) => {
-                          const categoryRooms = rooms.filter(r => r.property_type === category || (category === 'Shared' && r.property_type.includes('Shared')));
+                          const categoryRooms = rooms.filter(r => r.property_type === category || (category === 'Shared' && (r.property_type || '').includes('Shared')));
                           if (categoryRooms.length === 0) return null;
 
                           return (
