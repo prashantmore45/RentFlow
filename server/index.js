@@ -50,13 +50,6 @@ const limiter = rateLimit({
   skip: (req) => req.method === 'OPTIONS', // preflight shouldn't burn quota
 });
 
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5, // limit auth attempts to 5 per 15 minutes
-  skipSuccessfulRequests: true,
-  message: 'Too many login attempts, please try again later.'
-});
-
 app.use(limiter);
 
 // Middleware
@@ -64,8 +57,6 @@ app.use(express.json());
 
 // ROUTES 
 app.use('/api/rooms', roomRoutes);
-// Apply stricter rate limiting to auth-related endpoints if they exist
-// app.use('/api/auth', authLimiter);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/profiles', profileRoutes);
 app.use('/api/favorites', favoriteRoutes); 

@@ -3,24 +3,25 @@ export const errorHandler = (err, req, res, next) => {
 
   // Supabase errors
   if (err.status === 406 || err.message?.includes('not found')) {
-    return res.status(404).json({ error: 'Resource not found' });
+    return res.status(404).json({ success: false, error: 'Resource not found' });
   }
 
   if (err.status === 409 || err.message?.includes('duplicate')) {
-    return res.status(409).json({ error: 'Conflict - duplicate entry' });
+    return res.status(409).json({ success: false, error: 'Conflict - duplicate entry' });
   }
 
   // JWT errors
   if (err.name === 'JsonWebTokenError') {
-    return res.status(403).json({ error: 'Invalid token' });
+    return res.status(403).json({ success: false, error: 'Invalid token' });
   }
 
   if (err.name === 'TokenExpiredError') {
-    return res.status(401).json({ error: 'Token expired' });
+    return res.status(401).json({ success: false, error: 'Token expired' });
   }
 
   // Default error
   res.status(err.status || 500).json({ 
+    success: false,
     error: err.message || 'Internal server error',
     ...(process.env.NODE_ENV === 'development' && { details: err })
   });
