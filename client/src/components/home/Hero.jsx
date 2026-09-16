@@ -12,7 +12,7 @@ const Hero = ({ user, onSearch }) => {
         if (!user) {
             navigate('/login');
         } else {
-            onSearch(locationSearch, typeSearch);
+            navigate(`/map-search?location=${encodeURIComponent(locationSearch)}&type=${encodeURIComponent(typeSearch)}`);
         }
     };
 

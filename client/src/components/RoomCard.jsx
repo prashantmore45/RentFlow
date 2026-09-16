@@ -2,12 +2,12 @@ import { Link } from 'react-router-dom';
 import { IndianRupee, Heart, MapPin, ArrowRight, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const RoomCard = ({ room, isGuest, isLiked, onToggleLike, onGuestClick }) => {
+const RoomCard = ({ room, isGuest, isLiked, onToggleLike, onGuestClick, fluid = false }) => {
     return (
         <motion.div 
             whileHover={{ y: -8 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            className="min-w-[85vw] md:min-w-[350px] lg:min-w-[400px] snap-center"
+            className={`${fluid ? 'w-full h-full' : 'min-w-[85vw] md:min-w-[350px] lg:min-w-[400px] snap-center'}`}
         >
             <Link 
                 to={isGuest ? '#' : `/room/${room.id}`} 

@@ -13,6 +13,7 @@ import Profile from './pages/Profile';
 import Legal from './pages/Legal';
 import Favorites from './pages/Favorites';
 import Chat from './pages/Chat';
+import MapSearch from './pages/MapSearch';
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
         <div className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/map-search" element={<MapSearch />} />
             <Route path="/add-room" element={<AddRoom />} />
             <Route path="/room/:id" element={<RoomDetails />} />
             <Route path="/login" element={<Login />} />
