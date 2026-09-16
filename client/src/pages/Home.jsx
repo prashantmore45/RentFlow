@@ -5,9 +5,12 @@ import { supabase } from '../supabase';
 import { ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 
+import { motion } from 'framer-motion';
+
 import Hero from '../components/home/Hero';
 import { Stats, HowItWorks, Features, Testimonials, FAQ, CTA } from '../components/home/MarketingSections';
 import RoomCard from '../components/RoomCard';
+import { RoomCardSkeleton } from '../components/Skeletons';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -118,8 +121,8 @@ const Home = () => {
       {/* 3. LISTINGS (The Product) */}
       <div className="max-w-[95rem] mx-auto px-4 py-16">
         {loading ? (
-           <div className="flex justify-center py-20">
-               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+           <div className="flex gap-6 overflow-x-hidden pb-8 px-2">
+               {[1, 2, 3, 4].map(i => <RoomCardSkeleton key={i} />)}
            </div>
         ) : (
           <>
@@ -151,20 +154,28 @@ const Home = () => {
                // LOGGED IN USER
                <div className="space-y-16">
                   {isSearching ? (
-                      <div>
+                      <motion.div 
+                          initial="hidden" 
+                          animate="visible" 
+                          variants={{
+                              hidden: { opacity: 0 },
+                              visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+                          }}
+                      >
                           <h2 className="font-heading text-2xl font-bold mb-6 px-2">Search Results</h2>
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                               {rooms.map(room => (
-                                  <RoomCard 
-                                    key={room.id}
-                                    room={room}
-                                    isGuest={false}
-                                    isLiked={favorites.includes(room.id)}
-                                    onToggleLike={toggleFavorite}
-                                  />
+                                  <motion.div key={room.id} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
+                                      <RoomCard 
+                                        room={room}
+                                        isGuest={false}
+                                        isLiked={favorites.includes(room.id)}
+                                        onToggleLike={toggleFavorite}
+                                      />
+                                  </motion.div>
                               ))}
                           </div>
-                      </div>
+                      </motion.div>
                   ) : (
                       categories.map((category) => {
                           const categoryRooms = rooms.filter(r => r.property_type === category || (category === 'Shared' && (r.property_type || '').includes('Shared')));
@@ -177,17 +188,27 @@ const Home = () => {
                                       <span className="text-sm text-gray-500 font-medium bg-gray-800 px-2 py-1 rounded-md">{categoryRooms.length}</span>
                                   </div>
                                   
-                                  <div className="flex gap-6 overflow-x-auto pb-4 snap-x mandatory scrollbar-hide px-2">
+                                  <motion.div 
+                                      initial="hidden"
+                                      whileInView="visible"
+                                      viewport={{ once: true, margin: "-50px" }}
+                                      variants={{
+                                          hidden: { opacity: 0 },
+                                          visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+                                      }}
+                                      className="flex gap-6 overflow-x-auto pb-4 snap-x mandatory scrollbar-hide px-2"
+                                  >
                                       {categoryRooms.map(room => (
-                                          <RoomCard 
-                                            key={room.id}
-                                            room={room}
-                                            isGuest={false}
-                                            isLiked={favorites.includes(room.id)}
-                                            onToggleLike={toggleFavorite}
-                                          />
+                                          <motion.div key={room.id} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
+                                              <RoomCard 
+                                                room={room}
+                                                isGuest={false}
+                                                isLiked={favorites.includes(room.id)}
+                                                onToggleLike={toggleFavorite}
+                                              />
+                                          </motion.div>
                                       ))}
-                                  </div>
+                                  </motion.div>
                               </div>
                           )
                       })

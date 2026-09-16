@@ -1,6 +1,6 @@
-import jwt from 'jsonwebtoken';
+import { supabase } from '../supabase.js';
 
-export const verifyToken = (req, res, next) => {
+export const verifyToken = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -8,63 +8,40 @@ export const verifyToken = (req, res, next) => {
     }
 
     const token = authHeader.split(' ')[1];
-    const jwtSecret = process.env.JWT_SECRET;
     
-    if (!jwtSecret) {
-      console.error('JWT_SECRET not configured');
-      return res.status(500).json({ error: 'Server configuration error' });
+    // Verify token using Supabase Auth
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    
+    if (error || !user) {
+      console.error('Supabase auth error:', error?.message);
+      return res.status(403).json({ error: 'Forbidden - Invalid token' });
     }
-    
-    // Verify token signature with backend secret
-    const decoded = jwt.verify(token, jwtSecret);
-    
-    if (!decoded) {
-      return res.status(403).json({ error: 'Invalid token format' });
-    }
-    
-    console.log('Token verified:', { sub: decoded.sub, id: decoded.id, email: decoded.email });
     
     req.user = {
-      id: decoded.sub || decoded.id,
-      email: decoded.email,
-      iat: decoded.iat
+      id: user.id,
+      email: user.email,
     };
     
-    console.log('User extracted:', req.user);
     next();
   } catch (error) {
     console.error('Auth error:', error.message);
-    if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({ error: 'Token expired' });
-    }
-    if (error.name === 'JsonWebTokenError') {
-      return res.status(403).json({ error: 'Invalid token' });
-    }
     res.status(403).json({ error: 'Forbidden - Token verification failed' });
   }
 };
 
-export const optionalAuth = (req, res, next) => {
+export const optionalAuth = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.split(' ')[1];
-      const jwtSecret = process.env.JWT_SECRET;
       
-      if (jwtSecret) {
-        try {
-          const decoded = jwt.verify(token, jwtSecret);
-          if (decoded) {
-            req.user = {
-              id: decoded.sub || decoded.id,
-              email: decoded.email,
-              iat: decoded.iat
-            };
-          }
-        } catch (tokenError) {
-          // Token invalid/expired - continue without user
-          console.warn('Optional token verification failed:', tokenError.message);
-        }
+      const { data: { user } } = await supabase.auth.getUser(token);
+      
+      if (user) {
+        req.user = {
+          id: user.id,
+          email: user.email,
+        };
       }
     }
     next();

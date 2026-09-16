@@ -6,6 +6,8 @@ import {
   MapPin, IndianRupee, User, ArrowLeft, Send, ShieldCheck, 
   Star, MessageCircle, Calendar, CheckCircle 
 } from 'lucide-react'; 
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { RoomDetailsSkeleton } from '../components/Skeletons';
 
 const RoomDetails = () => {
   const { id } = useParams();
@@ -26,6 +28,10 @@ const RoomDetails = () => {
   // Review Form States
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState('');
+
+  // Parallax Scroll Effect
+  const { scrollY } = useScroll();
+  const heroY = useTransform(scrollY, [0, 500], [0, 150]);
 
   useEffect(() => {
     const getData = async () => {
@@ -120,17 +126,18 @@ const RoomDetails = () => {
       }
   };
 
-  if (loading) return <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">Loading...</div>;
-  if (!room) return <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">Room not found</div>;
+  if (loading) return <RoomDetailsSkeleton />;
+  if (!room) return <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center font-bold text-2xl">Room not found</div>;
 
   return (
     <div className="min-h-screen bg-gray-900 text-white pb-20">
       
       {/* HERO IMAGE BACKGROUND */}
-      <div className="relative h-[50vh] w-full">
-          <img 
+      <div className="relative h-[50vh] w-full overflow-hidden">
+          <motion.img 
+            style={{ y: heroY }}
             src={room.image_url || "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267"} 
-            className="w-full h-full object-cover"
+            className="w-full h-[120%] object-cover -mt-[10%]"
             alt="Room Cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent"></div>
@@ -143,7 +150,12 @@ const RoomDetails = () => {
       <div className="max-w-7xl mx-auto px-4 -mt-32 relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* LEFT COLUMN: DETAILS & REVIEWS */}
-        <div className="lg:col-span-2 space-y-8">
+        <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-2 space-y-8"
+        >
             
             {/* Title Card */}
             <div className="bg-gray-800/80 backdrop-blur-md rounded-3xl p-8 border border-gray-700 shadow-2xl">
@@ -254,10 +266,15 @@ const RoomDetails = () => {
                 </div>
             </div>
 
-        </div>
+        </motion.div>
 
         {/* RIGHT COLUMN: ACTION CARD (Sticky) */}
-        <div className="lg:col-span-1">
+        <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="lg:col-span-1"
+        >
             <div className="sticky top-24 space-y-6">
                 
                 {/* Price & Action Card */}
@@ -326,7 +343,7 @@ const RoomDetails = () => {
                 </div>
 
             </div>
-        </div>
+        </motion.div>
 
       </div>
     </div>
