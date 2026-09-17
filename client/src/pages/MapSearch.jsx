@@ -87,11 +87,14 @@ const MapSearch = () => {
             if (session?.user) {
                 setUser(session.user);
                 fetchFavorites(session.user.id);
+            } else {
+                toast.error("Please login to use the map search");
+                navigate('/login');
             }
         };
         checkUser();
         fetchRooms(initialLoc, initialType);
-    }, []);
+    }, [navigate, initialLoc, initialType]);
 
     const fetchRooms = async (loc, type) => {
         setLoading(true);

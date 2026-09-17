@@ -155,28 +155,13 @@ const Home = () => {
         ) : (
           <>
             {!user ? (
-               // GUEST VIEW
-               <div>
-                  <div className="flex justify-between items-end mb-8 px-2">
-                    <div>
-                        <h2 className="font-heading text-3xl md:text-5xl font-bold mb-2">Fresh on the Market</h2>
-                        <p className="text-gray-400">Join to see full details and apply.</p>
-                    </div>
-                    <Link to="/login" className="hidden md:flex items-center gap-2 text-blue-400 font-semibold hover:text-blue-300 transition-colors">
-                        Login to View All <ArrowRight size={20} />
-                    </Link>
-                  </div>
-                  
-                  <div className="flex gap-6 overflow-x-auto pb-8 snap-x mandatory scrollbar-hide px-2">
-                    {rooms.slice(0, 4).map(room => (
-                      <RoomCard 
-                        key={room.id}
-                        room={room} 
-                        isGuest={true} 
-                        onGuestClick={handleGuestClick}
-                      />
-                    ))}
-                  </div>
+               // GUEST VIEW (No listings shown)
+               <div className="text-center py-20 px-4">
+                  <h2 className="font-heading text-3xl md:text-5xl font-bold mb-6">Ready to find your new home?</h2>
+                  <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">Join RentFlow today to browse thousands of verified properties, connect directly with landlords, and secure your next rental instantly.</p>
+                  <Link to="/login" state={{ mode: 'signup' }} className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg active:scale-95">
+                      Create a Free Account
+                  </Link>
                </div>
             ) : (
                // LOGGED IN USER

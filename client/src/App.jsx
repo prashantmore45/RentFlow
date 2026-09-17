@@ -16,7 +16,7 @@ import MapSearch from './pages/MapSearch';
 import TenantDashboard from './pages/TenantDashboard';
 import HostDashboard from './pages/HostDashboard';
 import AdminDashboard from './pages/AdminDashboard';
-
+import UpdatePassword from './pages/UpdatePassword';
 
 function AppContent() {
   const location = useLocation();
@@ -34,6 +34,7 @@ function AppContent() {
           <Route path="/add-room" element={<AddRoom />} />
           <Route path="/room/:id" element={<RoomDetails />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/update-password" element={<UpdatePassword />} />
           <Route path="/dashboard/tenant" element={<TenantDashboard />} />
           <Route path="/dashboard/host" element={<HostDashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
