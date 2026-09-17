@@ -12,3 +12,8 @@
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
 }
+
+body {
+    background-color: #030712; /* Tailwind gray-950 */
+    color: #ffffff;
+}

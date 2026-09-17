@@ -49,8 +49,8 @@ export const updateProfileSchema = Joi.object({
   full_name: Joi.string().min(2).max(100).optional().trim().allow(null, ''),
   bio: Joi.string().max(500).optional().trim().allow(null, ''),
   avatar_url: Joi.string().uri().optional().allow(null, ''),
-  phone: Joi.string().pattern(/^[0-9\s\-\+\(\)]+$/).optional(),
-  location: Joi.string().max(100).optional().trim()
+  phone: Joi.string().pattern(/^[0-9\s\-\+\(\)]+$/).optional().allow(null, ''),
+  location: Joi.string().max(100).optional().trim().allow(null, '')
 });
 
 // Review validation schemas

@@ -17,7 +17,12 @@ const Home = () => {
   const [rooms, setRooms] = useState([]);
   const [favorites, setFavorites] = useState([]); 
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+      const token = localStorage.getItem('access_token');
+      const userId = localStorage.getItem('user_id');
+      if (token && userId) return { id: userId };
+      return null;
+  });
   
   // Search state passed to Hero
   const [isSearching, setIsSearching] = useState(false);
@@ -26,17 +31,40 @@ const Home = () => {
   const categories = ["1 BHK", "2 BHK", "Single Room", "Shared", "Villa"];
 
   useEffect(() => {
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      const currentUser = session?.user || null;
-      setUser(currentUser);
-      
-      if (currentUser) {
-        fetchFavorites(currentUser.id);
-      }
+    let mounted = true;
+    
+    // Proactively fetch session on mount for client-side routing
+    const checkSession = async () => {
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!mounted) return;
+            
+            const currentUser = session?.user || null;
+            setUser(currentUser);
+            if (currentUser) {
+                fetchFavorites(currentUser.id);
+            }
+        } catch (err) {
+            console.error("Session check error:", err);
+        }
     };
-    checkUser();
+    checkSession();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+        if (!mounted) return;
+        const currentUser = session?.user || null;
+        setUser(currentUser);
+        if (currentUser) {
+            fetchFavorites(currentUser.id);
+        }
+    });
+
     fetchRooms();
+
+    return () => {
+        mounted = false;
+        authListener.subscription.unsubscribe();
+    };
   }, []);
 
   const fetchRooms = async (location = '', type = '') => {

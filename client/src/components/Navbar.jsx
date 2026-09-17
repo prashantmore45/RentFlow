@@ -1,22 +1,45 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
-import { LogOut, Home, PlusSquare, LayoutDashboard, Menu, X, User, Heart } from 'lucide-react';
+import { LogOut, Home, PlusSquare, LayoutDashboard, Menu, X, User, Heart, ShieldAlert } from 'lucide-react';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-    };
-    checkUser();
+  const fetchUserAndRole = async (authUser) => {
+      if (!authUser) {
+          setUser(null);
+          localStorage.removeItem('user_role');
+          return;
+      }
+      
+      const cachedRole = localStorage.getItem(`role_${authUser.id}`);
+      if (cachedRole) {
+          setUser({ ...authUser, role: cachedRole });
+      }
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-       setUser(session?.user ?? null);
+      try {
+          const { data: profile } = await supabase.from('profiles').select('role').eq('id', authUser.id).single();
+          const role = profile?.role || 'tenant';
+          localStorage.setItem(`role_${authUser.id}`, role);
+          setUser({ ...authUser, role });
+      } catch (err) {
+          if (!cachedRole) setUser({ ...authUser, role: 'tenant' });
+      }
+  };
+
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+       if (session?.access_token && session?.user) {
+           localStorage.setItem('access_token', session.access_token);
+           localStorage.setItem('user_id', session.user.id);
+       } else {
+           localStorage.removeItem('access_token');
+           localStorage.removeItem('user_id');
+       }
+       await fetchUserAndRole(session?.user);
     });
 
     return () => {
@@ -25,9 +48,36 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    // 1. Instantly clear UI state
+    setUser(null);
     setIsOpen(false);
-    navigate('/login');
+    
+    // 2. Clear all local storage caches
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('user_id');
+    localStorage.removeItem('user_role');
+    if (user) {
+        localStorage.removeItem(`role_${user.id}`);
+    }
+    
+    // 3. Force-clear Supabase's auth token from storage just in case signOut hangs
+    Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('sb-') && key.endsWith('-auth-token')) {
+            localStorage.removeItem(key);
+        }
+    });
+
+    try {
+        await Promise.race([
+            supabase.auth.signOut(),
+            new Promise(resolve => setTimeout(resolve, 1000))
+        ]);
+    } catch (err) {
+        console.error("Logout error ignored:", err);
+    }
+    
+    // 4. Hard redirect to completely wipe any HMR memory deadlocks in the GoTrue client
+    window.location.href = '/login';
   };
 
   return (
@@ -36,49 +86,63 @@ const Navbar = () => {
         <div className="flex justify-between h-16 md:h-20 items-center">
           
           {/* LOGO SECTION */}
-          <Link to="/" className="flex items-center gap-2 md:gap-3 group">
-            <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                viewBox="0 0 24 24" 
-                className="w-8 h-8 md:w-11 md:h-11 transition-transform duration-300 group-hover:scale-110"
-            >
-                <defs>
-                <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#60A5FA" />
-                    <stop offset="100%" stopColor="#A855F7" />
-                </linearGradient>
-                </defs>
-                <path 
-                fill="url(#logo-gradient)" 
-                d="M12 2C7.589 2 4 5.589 4 10C4 15 10 22 12 22C14 22 20 15 20 10C20 5.589 16.411 2 12 2ZM12 14C9.79 14 8 12.21 8 10C8 7.79 9.79 6 12 6C14.21 6 16 7.79 16 10C16 12.21 14.21 14 12 14Z"
+          <Link to="/" className="flex items-center group">
+            <div className="relative h-12 md:h-16 w-auto overflow-hidden transition-all duration-300 group-hover:scale-105">
+                <img 
+                    src="/logo.png" 
+                    alt="RentFlow Logo" 
+                    className="h-full w-auto object-contain"
                 />
-                <circle cx="12" cy="10" r="3" fill="#111827" />
-            </svg>
-            <span className="text-xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent tracking-tight">
-              RentFlow
-            </span>
+            </div>
           </Link>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-4">
-            <Link to="/" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-lg transition-all flex items-center gap-2">
-              <Home size={18} /> Home
-            </Link>
             
             {user ? (
               <>
-                <Link to="/add-room" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-lg transition-all flex items-center gap-2">
-                  <PlusSquare size={18} /> Post Room
-                </Link>
-                <Link to="/dashboard" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-lg transition-all flex items-center gap-2">
-                  <LayoutDashboard size={18} /> Dashboard
-                </Link>
-                <Link to="/profile" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-lg transition-all flex items-center gap-2">
-                  <User size={18} /> Profile
-                </Link>
-                <Link to="/favorites" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-lg transition-all flex items-center gap-2">
-                  <Heart size={18}   /> My Favorites
-                </Link>
+                {user.role !== 'admin' && (
+                    <Link to="/" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-lg transition-all flex items-center gap-2">
+                        <Home size={18} /> Home
+                    </Link>
+                )}
+
+                {user.role === 'landlord' && (
+                    <Link to="/add-room" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-lg transition-all flex items-center gap-2">
+                      <PlusSquare size={18} /> Post Room
+                    </Link>
+                )}
+
+                {user.role === 'tenant' && (
+                    <Link to="/dashboard/tenant" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-lg transition-all flex items-center gap-2">
+                      <LayoutDashboard size={18} /> Dashboard
+                    </Link>
+                )}
+
+                {user.role === 'landlord' && (
+                    <Link to="/dashboard/host" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-lg transition-all flex items-center gap-2">
+                      <LayoutDashboard size={18} /> Host Dashboard
+                    </Link>
+                )}
+
+                {user.role !== 'admin' && (
+                    <Link to="/profile" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-lg transition-all flex items-center gap-2">
+                        <User size={18} /> Profile
+                    </Link>
+                )}
+                
+                {user.role === 'tenant' && (
+                    <Link to="/favorites" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-lg transition-all flex items-center gap-2">
+                        <Heart size={18}   /> Favorites
+                    </Link>
+                )}
+
+                {/* Admin Link (Conditional) */}
+                {user.role === 'admin' && (
+                    <Link to="/admin" className="text-red-400 hover:text-red-300 hover:bg-red-500/10 px-3 py-2 rounded-lg transition-all flex items-center gap-2 font-bold border border-red-500/20">
+                      <ShieldAlert size={18} /> Admin
+                    </Link>
+                )}
                 
                 <div className="flex items-center gap-4 ml-2 pl-4 border-l border-gray-700">
                   <button onClick={handleLogout} className="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2 text-sm font-bold border border-red-500/20">
@@ -116,24 +180,44 @@ const Navbar = () => {
       {isOpen && (
         <div className="md:hidden bg-gray-900 border-b border-gray-700 shadow-xl">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <Link to="/" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
-              <Home size={20} className="text-blue-400" /> Home
-            </Link>
+            {(!user || user.role !== 'admin') && (
+                <Link to="/" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
+                <Home size={20} className="text-blue-400" /> Home
+                </Link>
+            )}
             
             {user ? (
               <>
-                <Link to="/add-room" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
-                  <PlusSquare size={20} className="text-purple-400" /> Post Room
-                </Link>
-                <Link to="/dashboard" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
-                  <LayoutDashboard size={20} className="text-green-400" /> Dashboard
-                </Link>
-                <Link to="/profile" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
-                  <User size={20} /> Profile
-                </Link>
-                <Link to="/favorites" className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
-                  <Heart size={20} className="text-pink-400" /> My Favorites
-                </Link>
+                {user.role === 'landlord' && (
+                    <Link to="/add-room" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
+                    <PlusSquare size={20} className="text-purple-400" /> Post Room
+                    </Link>
+                )}
+                {user.role === 'tenant' && (
+                    <Link to="/dashboard/tenant" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
+                    <LayoutDashboard size={20} className="text-blue-400" /> Dashboard
+                    </Link>
+                )}
+                {user.role === 'landlord' && (
+                    <Link to="/dashboard/host" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
+                    <LayoutDashboard size={20} className="text-green-400" /> Host Dashboard
+                    </Link>
+                )}
+                {user.role !== 'admin' && (
+                    <Link to="/profile" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
+                        <User size={20} /> Profile
+                    </Link>
+                )}
+                {user.role === 'tenant' && (
+                    <Link to="/favorites" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
+                        <Heart size={20} className="text-pink-400" /> My Favorites
+                    </Link>
+                )}
+                {user.role === 'admin' && (
+                    <Link to="/admin" onClick={() => setIsOpen(false)} className="text-red-400 hover:bg-red-500/10 block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
+                      <ShieldAlert size={20} /> Admin Panel
+                    </Link>
+                )}
                 <button onClick={handleLogout} className="w-full text-left text-red-400 hover:bg-red-500/10 hover:text-red-300 block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 mt-2 border-t border-gray-800 transition-colors">
                   <LogOut size={20} /> Logout
                 </button>

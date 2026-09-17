@@ -11,27 +11,14 @@ const Footer = () => {
           
           {/* Brand Info */}
           <div className="space-y-4">
-            <Link to="/" className="flex items-center gap-2 group">
-                <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    viewBox="0 0 24 24" 
-                    className="w-8 h-8 transition-transform duration-300 group-hover:scale-110"
-                >
-                    <defs>
-                    <linearGradient id="footer-logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#60A5FA" />
-                        <stop offset="100%" stopColor="#A855F7" />
-                    </linearGradient>
-                    </defs>
-                    <path 
-                    fill="url(#footer-logo-gradient)" 
-                    d="M12 2C7.589 2 4 5.589 4 10C4 15 10 22 12 22C14 22 20 15 20 10C20 5.589 16.411 2 12 2ZM12 14C9.79 14 8 12.21 8 10C8 7.79 9.79 6 12 6C14.21 6 16 7.79 16 10C16 12.21 14.21 14 12 14Z"
+            <Link to="/" className="flex items-center group">
+                <div className="relative h-12 md:h-16 w-auto overflow-hidden transition-all duration-300 group-hover:scale-105">
+                    <img 
+                        src="/logo.png" 
+                        alt="RentFlow Logo" 
+                        className="h-full w-auto object-contain"
                     />
-                    <circle cx="12" cy="10" r="3" fill="#111827" />
-                </svg>
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                    RentFlow
-                </span>
+                </div>
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed">
               Simplifying the rental journey for tenants and landlords. 
@@ -53,7 +40,7 @@ const Footer = () => {
               </li>
               
               <li>
-                <Link to="/dashboard" className="hover:text-blue-400 transition-colors">Dashboard</Link>
+                <Link to="/dashboard/tenant" className="hover:text-blue-400 transition-colors">Tenant Dashboard</Link>
               </li>
               
               <li>

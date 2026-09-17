@@ -42,12 +42,31 @@ const Login = () => {
         alert('Registration Successful! Check your email for verification.');
         setIsSignUp(false);
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email: formData.email,
           password: formData.password,
         });
         if (error) throw error;
-        navigate('/');
+        
+        // Smart Role-Based Redirection
+        try {
+            const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).single();
+            const userRole = profile?.role || 'tenant';
+            
+            // Cache role to speed up subsequent renders
+            localStorage.setItem(`role_${data.user.id}`, userRole);
+            
+            if (userRole === 'admin') {
+                navigate('/admin');
+            } else if (userRole === 'landlord') {
+                navigate('/dashboard/host');
+            } else {
+                navigate('/');
+            }
+        } catch (err) {
+            console.error("Failed to fetch role, defaulting to home:", err);
+            navigate('/');
+        }
       }
     } catch (err) {
       setError(err.message);

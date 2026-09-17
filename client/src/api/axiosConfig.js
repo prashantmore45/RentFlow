@@ -15,14 +15,13 @@ export const api = axios.create({
 api.interceptors.request.use(
   async (config) => {
     try {
-      // Get current session from Supabase
-      const { data: { session } } = await supabase.auth.getSession();
+      let token = localStorage.getItem('access_token');
       
-      if (session?.access_token) {
-        config.headers.Authorization = `Bearer ${session.access_token}`;
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
       }
     } catch (error) {
-      console.error('Error getting auth token:', error);
+      console.warn('Skipping auth token due to timeout or error:', error.message);
     }
     
     return config;

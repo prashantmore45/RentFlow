@@ -26,7 +26,7 @@ const EditRoom = () => {
         // Security Check: Is this MY room?
         if (res.data.owner_id !== user.id) {
           alert("You are not authorized to edit this room.");
-          navigate('/dashboard');
+          navigate('/dashboard/host');
           return;
         }
 
@@ -57,8 +57,8 @@ const EditRoom = () => {
     try {
       await api.put(`/api/rooms/${id}`, formData);
       
-      alert("Room updated successfully!");
-      navigate('/dashboard');
+      toast.success('Room updated successfully!');
+      navigate('/dashboard/host');
     } catch (err) {
         console.error(err);
         alert("Failed to update room.");
@@ -114,7 +114,7 @@ const EditRoom = () => {
           </div>
 
           <div className="flex gap-4">
-             <button type="button" onClick={() => navigate('/dashboard')} className="w-1/3 bg-gray-700 hover:bg-gray-600 py-3 rounded-xl font-bold">Cancel</button>
+             <button type="button" onClick={() => navigate('/dashboard/host')} className="w-1/3 bg-gray-700 hover:bg-gray-600 py-3 rounded-xl font-bold">Cancel</button>
              <button type="submit" disabled={updating} className="w-2/3 bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl font-bold flex justify-center items-center gap-2">
                 {updating ? <Loader2 className="animate-spin" /> : <><Save size={18}/> Save Changes</>}
              </button>
