@@ -124,12 +124,20 @@ export const FAQ = () => (
 export const CTA = ({ user }) => (
     <div className="bg-gradient-to-r from-blue-900 to-purple-900 py-20 relative overflow-hidden mt-20">
         <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
-            <h2 className="font-heading text-3xl md:text-5xl font-bold mb-6 text-white">Ready to find your new place?</h2>
+            <h2 className="font-heading text-3xl md:text-5xl font-bold mb-6 text-white">
+                {user?.role === 'landlord' ? 'Ready to find a tenant?' : 'Ready to find your new place?'}
+            </h2>
             <div className="flex justify-center">
                 {user ? (
-                     <Link to="/add-room" className="bg-white text-blue-900 font-bold py-4 px-10 rounded-xl hover:bg-gray-100 transition-colors shadow-2xl">
-                        Post a Room Now
-                    </Link>
+                     user.role === 'landlord' ? (
+                         <Link to="/add-room" className="bg-white text-blue-900 font-bold py-4 px-10 rounded-xl hover:bg-gray-100 transition-colors shadow-2xl">
+                            Post a Room Now
+                        </Link>
+                     ) : (
+                         <Link to="/map-search" className="bg-white text-blue-900 font-bold py-4 px-10 rounded-xl hover:bg-gray-100 transition-colors shadow-2xl">
+                            Search Rooms
+                        </Link>
+                     )
                 ) : (
                     <Link to="/login" state={{ mode: 'signup' }} className="bg-white text-blue-900 font-bold py-4 px-10 rounded-xl hover:bg-gray-100 transition-colors shadow-2xl">
                         Get Started for Free

@@ -32,8 +32,11 @@ const Hero = ({ user, onSearch }) => {
                 )}
 
                 <h1 className="font-heading text-4xl md:text-7xl font-extrabold mb-6 tracking-tight leading-tight">
-                    Find Your <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Flow</span>, <br />
-                    Find Your <span className="text-white">Home.</span>
+                    {user?.role === 'landlord' ? (
+                        <>Find Your <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Flow</span>, <br />Find A <span className="text-white">Tenant.</span></>
+                    ) : (
+                        <>Find Your <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Flow</span>, <br />Find Your <span className="text-white">Home.</span></>
+                    )}
                 </h1>
 
                 {/* Search Bar */}

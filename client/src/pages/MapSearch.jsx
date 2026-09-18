@@ -30,6 +30,7 @@ const CITY_COORDS = {
 };
 
 const getCoordinates = (locationString) => {
+    if (!locationString) return [20.5937 + (Math.random() - 0.5), 78.9629 + (Math.random() - 0.5)];
     const loc = locationString.toLowerCase();
     for (const city in CITY_COORDS) {
         if (loc.includes(city)) {
@@ -105,11 +106,11 @@ const MapSearch = () => {
             if (type) params.append('type', type);
             if (params.toString()) path += `?${params.toString()}`;
 
-            const res = await api.get(path);
-            setRooms(res.data);
+            const data = Array.isArray(res.data) ? res.data : [];
+            setRooms(data);
 
-            if (res.data.length > 0) {
-                setMapCenter(getCoordinates(loc || res.data[0].location));
+            if (data.length > 0) {
+                setMapCenter(getCoordinates(loc || data[0].location));
             } else if (loc) {
                 setMapCenter(getCoordinates(loc));
             }
@@ -124,7 +125,8 @@ const MapSearch = () => {
     const fetchFavorites = async (userId) => {
         try {
             const res = await api.get(`/api/favorites/${userId}`);
-            setFavorites(res.data.map(f => f.room_id));
+            const data = Array.isArray(res.data) ? res.data : [];
+            setFavorites(data.map(f => f.room_id));
         } catch (err) {
             console.error(err);
         }

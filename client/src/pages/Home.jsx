@@ -20,7 +20,7 @@ const Home = () => {
   const [user, setUser] = useState(() => {
       const token = localStorage.getItem('access_token');
       const userId = localStorage.getItem('user_id');
-      if (token && userId) return { id: userId };
+      if (token && userId) return { id: userId, role: localStorage.getItem(`role_${userId}`) || 'tenant' };
       return null;
   });
   
@@ -33,16 +33,35 @@ const Home = () => {
   useEffect(() => {
     let mounted = true;
     
+    const fetchUserRole = async (userId) => {
+        let userRole = localStorage.getItem(`role_${userId}`);
+        if (!userRole) {
+            try {
+                const { data: profile } = await supabase.from('profiles').select('role').eq('id', userId).single();
+                userRole = profile?.role || 'tenant';
+                localStorage.setItem(`role_${userId}`, userRole);
+            } catch (err) {
+                console.error("Error fetching role:", err);
+                userRole = 'tenant';
+            }
+        }
+        return userRole;
+    };
+
     // Proactively fetch session on mount for client-side routing
     const checkSession = async () => {
         try {
             const { data: { session } } = await supabase.auth.getSession();
             if (!mounted) return;
             
-            const currentUser = session?.user || null;
-            setUser(currentUser);
+            let currentUser = session?.user || null;
             if (currentUser) {
+                const role = await fetchUserRole(currentUser.id);
+                currentUser = { ...currentUser, role };
+                setUser(currentUser);
                 fetchFavorites(currentUser.id);
+            } else {
+                setUser(null);
             }
         } catch (err) {
             console.error("Session check error:", err);
@@ -50,12 +69,16 @@ const Home = () => {
     };
     checkSession();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
         if (!mounted) return;
-        const currentUser = session?.user || null;
-        setUser(currentUser);
+        let currentUser = session?.user || null;
         if (currentUser) {
+            const role = await fetchUserRole(currentUser.id);
+            currentUser = { ...currentUser, role };
+            setUser(currentUser);
             fetchFavorites(currentUser.id);
+        } else {
+            setUser(null);
         }
     });
 
@@ -63,7 +86,7 @@ const Home = () => {
 
     return () => {
         mounted = false;
-        authListener.subscription.unsubscribe();
+        authListener?.subscription?.unsubscribe();
     };
   }, []);
 
@@ -83,7 +106,7 @@ const Home = () => {
       if (params.toString()) path += `?${params.toString()}`;
 
       const res = await api.get(path);
-      setRooms(res.data.reverse()); 
+      setRooms(Array.isArray(res.data) ? res.data.reverse() : []);
     } catch (err) {
       console.error("Error fetching rooms:", err);
       toast.error('Failed to load rooms');
@@ -95,7 +118,7 @@ const Home = () => {
   const fetchFavorites = async (userId) => {
     try {
       const res = await api.get(`/api/favorites/${userId}`);
-      const roomIds = res.data.map(fav => fav.room_id);
+      const roomIds = Array.isArray(res.data) ? res.data.map(fav => fav.room_id) : [];
       setFavorites(roomIds); 
     } catch (err) {
       console.error("Error fetching favorites:", err);
