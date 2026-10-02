@@ -86,8 +86,8 @@ const Navbar = () => {
         <div className="flex justify-between h-16 md:h-20 items-center">
           
           {/* LOGO SECTION */}
-          <Link to="/" className="flex items-center group">
-            <div className="relative h-12 md:h-16 w-auto overflow-hidden transition-all duration-300 group-hover:scale-105">
+          <Link to="/" className="flex items-center">
+            <div className="relative h-12 md:h-16 w-auto overflow-hidden transition-all duration-300">
                 <img 
                     src="/logo.png" 
                     alt="RentFlow Logo" 
@@ -178,10 +178,10 @@ const Navbar = () => {
 
       {/* Mobile Menu Dropdown */}
       {isOpen && (
-        <div className="md:hidden bg-gray-900 border-b border-gray-700 shadow-xl">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <div className="md:hidden absolute top-[100%] left-0 w-full bg-gray-900 border-b border-gray-700 shadow-2xl z-50">
+          <div className="px-2 pt-2 pb-4 space-y-1 sm:px-3">
             {(!user || user.role !== 'admin') && (
-                <Link to="/" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
+                <Link to="/" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white px-4 py-3 rounded-xl text-base font-medium flex items-center gap-3 transition-colors">
                 <Home size={20} className="text-blue-400" /> Home
                 </Link>
             )}
@@ -189,45 +189,47 @@ const Navbar = () => {
             {user ? (
               <>
                 {user.role === 'landlord' && (
-                    <Link to="/add-room" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
+                    <Link to="/add-room" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white px-4 py-3 rounded-xl text-base font-medium flex items-center gap-3 transition-colors">
                     <PlusSquare size={20} className="text-purple-400" /> Post Room
                     </Link>
                 )}
                 {user.role === 'tenant' && (
-                    <Link to="/dashboard/tenant" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
+                    <Link to="/dashboard/tenant" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white px-4 py-3 rounded-xl text-base font-medium flex items-center gap-3 transition-colors">
                     <LayoutDashboard size={20} className="text-blue-400" /> Dashboard
                     </Link>
                 )}
                 {user.role === 'landlord' && (
-                    <Link to="/dashboard/host" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
+                    <Link to="/dashboard/host" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white px-4 py-3 rounded-xl text-base font-medium flex items-center gap-3 transition-colors">
                     <LayoutDashboard size={20} className="text-green-400" /> Host Dashboard
                     </Link>
                 )}
                 {user.role !== 'admin' && (
-                    <Link to="/profile" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
+                    <Link to="/profile" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white px-4 py-3 rounded-xl text-base font-medium flex items-center gap-3 transition-colors">
                         <User size={20} /> Profile
                     </Link>
                 )}
                 {user.role === 'tenant' && (
-                    <Link to="/favorites" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
+                    <Link to="/favorites" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-gray-800 hover:text-white px-4 py-3 rounded-xl text-base font-medium flex items-center gap-3 transition-colors">
                         <Heart size={20} className="text-pink-400" /> My Favorites
                     </Link>
                 )}
                 {user.role === 'admin' && (
-                    <Link to="/admin" onClick={() => setIsOpen(false)} className="text-red-400 hover:bg-red-500/10 block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 transition-colors">
+                    <Link to="/admin" onClick={() => setIsOpen(false)} className="text-red-400 hover:bg-red-500/10 px-4 py-3 rounded-xl text-base font-medium flex items-center gap-3 transition-colors">
                       <ShieldAlert size={20} /> Admin Panel
                     </Link>
                 )}
-                <button onClick={handleLogout} className="w-full text-left text-red-400 hover:bg-red-500/10 hover:text-red-300 block px-3 py-3 rounded-md text-base font-medium flex items-center gap-3 mt-2 border-t border-gray-800 transition-colors">
-                  <LogOut size={20} /> Logout
-                </button>
+                <div className="pt-2 mt-2 border-t border-gray-800">
+                  <button onClick={handleLogout} className="w-full text-left text-red-400 hover:bg-red-500/10 hover:text-red-300 px-4 py-3 rounded-xl text-base font-medium flex items-center gap-3 transition-colors">
+                    <LogOut size={20} /> Logout
+                  </button>
+                </div>
               </>
             ) : (
-              <div className="space-y-2 mt-4 px-2">
-                <Link to="/login" onClick={() => setIsOpen(false)} className="block w-full text-center text-gray-300 hover:text-white py-3 rounded-xl border border-gray-700 font-medium hover:bg-gray-800 transition-colors">
+              <div className="space-y-3 mt-2 px-2">
+                <Link to="/login" onClick={() => setIsOpen(false)} className="block w-full text-center text-gray-300 hover:text-white py-3.5 rounded-xl border border-gray-700 font-medium hover:bg-gray-800 transition-colors">
                   Log In
                 </Link>
-                <Link to="/login" state={{ mode: 'signup' }} onClick={() => setIsOpen(false)} className="block w-full text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition-transform">
+                <Link to="/login" state={{ mode: 'signup' }} onClick={() => setIsOpen(false)} className="block w-full text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3.5 rounded-xl font-bold shadow-lg active:scale-95 transition-transform">
                   Create Account
                 </Link>
               </div>

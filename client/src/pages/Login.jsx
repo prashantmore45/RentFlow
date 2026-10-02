@@ -126,7 +126,7 @@ const Login = () => {
       <div className="relative z-10 w-full max-w-md">
 
         {/* Auth Card */}
-        <div className="bg-gray-800/80 backdrop-blur-xl border border-gray-700 p-8 rounded-3xl shadow-2xl">
+        <div className="bg-gray-800/80 backdrop-blur-xl border border-gray-700 p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl">
             <h2 className="text-2xl font-bold text-white mb-2 text-center">
                 {isForgotPassword ? 'Reset Password' : (isSignUp ? 'Create an Account' : 'Welcome Back')}
             </h2>
